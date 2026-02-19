@@ -47,3 +47,9 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Curry's general ignores
+.Rproj.user
+.Rhistory
+.DS_Store
+*.Rproj
