@@ -7,4 +7,8 @@ Description of Files
 
 Name                                    | Description
 ----------------------------------------|--------------------------------
-create-sibling-matrix										| Creates lagged matrix of sibling returns.
+Pull Data
+	Gathers environmental data and combines it into a single data frame called Model_dat
+
+Preliminary Model Code
+	Sources Pull Data to use in model fitting, currently a collection of LM and GAM model calls.  Investigative only
