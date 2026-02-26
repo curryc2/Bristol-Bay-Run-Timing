@@ -15,6 +15,8 @@ Index_dat <- get_pdo_npgo(years=1963:2025, months=c(1,2,3,4,5), lags=c(0,0,0,0,0
 PDO <- as.data.frame(Index_dat$pdo)##Break into data frames to work with
 ENSO <-as.data.frame(Index_dat$enso)
 
+source(here("data/get-sst-data.r"))
+
 
 source(here("data/get-airport-data.r"))
 
@@ -71,6 +73,8 @@ July_datmeans <- July_dat %>% group_by(YEAR) %>%
 ######Clean up data and combine into a data frame to generate models from
 Model_dat <- cbind(PDO, ENSO, June_datmeans, July_datmeans[,2:4])
 Model_dat <- full_join(Model_dat, ICE_ext, by= "YEAR")
+Model_dat <- full_join(Model_dat, SpringGOA_mean, by= "YEAR")
+Model_dat <- full_join(Model_dat, JuneBB_mean, by= "YEAR")
 Model_dat <- Model_dat[-63,]  ##adjusting for no 2025 median timing data yet
 Model_dat <- cbind(Median_Timing, Model_dat)
 Model_dat <- Model_dat %>%
