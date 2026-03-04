@@ -1,6 +1,39 @@
+require(here)
+require(tidyverse)
+require(GGally)
+require(dplyr)
+require(mgcv)
+require(corrplot)
+
 
 source(here("R/Pull Data.R"))
 
+
+# Explore Data ======================
+Model_dat
+
+# Calculate 
+??ggpairs
+
+# Model_dat %>% dplyr::select(PDO_Jan:GOA_SpringSST_anomaly) %>% GGally::ggpairs()
+
+preds.df <- Model_dat %>% 
+              dplyr::select(PDO_Jan:GOA_SpringSST_anomaly) %>% 
+              dplyr::select(-c(region, source_dataset, mo))
+
+cor.preds <- preds.df %>% na.omit() %>% cor() %>% corrplot::corrplot.mixed()
+
+# Example predictor correlations for GAMs below
+Model_dat %>% dplyr::select(June_temp_anomaly, 
+                           June_cumwind_anomaly,
+                           PDO_May,
+                           ENSO_May,
+                           mean_pressure_June,
+                           extent,
+                           GOA_SpringSST_anomaly) %>% na.omit() %>% 
+         cor() %>% corrplot::corrplot.mixed()
+
+s(June_temp_anomaly) + June_cumwind_anomaly + s(PDO_May) + s(ENSO_May)+ mean_pressure_June+extent+s(GOA_SpringSST_anomaly)
 
 ###Linear model
 
@@ -63,12 +96,21 @@ library(mgcv)
 
 model_2 <- gam(bay ~ s(June_temp_anomaly) + June_cumwind_anomaly + s(PDO_May) + s(ENSO_May)+ mean_pressure_June+extent+s(GOA_SpringSST_anomaly), 
                data = Model_dat, na.action = na.omit)
+
+# Curry's tweak
+model_2 <- gam(bay ~ s(June_temp_anomaly) + June_cumwind_anomaly + s(PDO_May) + s(ENSO_May)+ mean_pressure_June+extent+s(GOA_SpringSST_anomaly) + s(YEAR), 
+               data = Model_dat, na.action = na.omit)
+
 summary(model_2)
 plot(residuals(model_2))
+par(mfrow=c(2,2))
+gam.check(model_2)
+visreg(model_2)
 
 model_2u <- gam(Uga ~ s(June_temp_anomaly) + June_cumwind_anomaly + s(PDO_May) + s(ENSO_May)+ mean_pressure_June+extent+s(GOA_SpringSST_anomaly), 
                 data = Model_dat, na.action = na.omit)
 summary(model_2u)
+gam.check(model_2u)
 
 model_2e <- gam(Ege  ~ s(June_temp_anomaly) + June_cumwind_anomaly + s(PDO_May) + s(ENSO_May)+ mean_pressure_June+extent+s(GOA_SpringSST_anomaly), 
                 data = Model_dat, na.action = na.omit)
