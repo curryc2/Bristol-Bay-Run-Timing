@@ -27,7 +27,12 @@ Airport_dat <- dplyr::select(king_salmon_data,YEAR,MONTH,DAY,WDSP,SLP,TEMP) ##se
 ICE_ext <- read.csv(here("data/Ice Extent.csv")) #csv file from NOAA
 ICE_ext <- ICE_ext %>%
   rename(YEAR = year)
+ICE_ext <- ICE_ext %>% dplyr::select(YEAR, extent)
 
+source(here("data/get-streamflow-data.R"))
+
+source(here("data/get-riverproportions-data.R"))
+#Gives proportions from late returning rivers within a district (Kvichak and Igushik)
 
 #####Salmon data
 Median_Timing <- read.csv(here("data/Median Table.csv"))
@@ -76,10 +81,11 @@ July_datmeans <- July_dat %>% group_by(YEAR) %>%
 ######Clean up data and combine into a data frame to generate models from
 Model_dat <- cbind(PDO, ENSO, June_datmeans, July_datmeans[,2:4])
 Model_dat <- full_join(Model_dat, ICE_ext, by= "YEAR")
-Model_dat <- full_join(Model_dat, SpringGOA_mean, by= "YEAR")
-Model_dat <- full_join(Model_dat, JuneBB_mean, by= "YEAR")
+Model_dat <- full_join(Model_dat, SST_means, by= "YEAR")
+Model_dat <- full_join(Model_dat, Streamflow_June_means, by= "YEAR")
+Model_dat <- full_join(Model_dat, River_Proportions, by= "YEAR")
+Model_dat <- full_join (Median_Timing, Model_dat, by="YEAR")
 Model_dat <- Model_dat[-63,]  ##adjusting for no 2025 median timing data yet
-Model_dat <- cbind(Median_Timing, Model_dat)
 Model_dat <- Model_dat %>%
   rename(PDO_Jan = `pdo_1_0`) %>%rename(PDO_Feb = `pdo_2_0`) %>%rename(PDO_Mar = `pdo_3_0`) %>%
   rename(PDO_Apr = `pdo_4_0`) %>% rename(PDO_May = `pdo_5_0`) %>% rename(ENSO_Jan = `enso_1_0`) %>% 
