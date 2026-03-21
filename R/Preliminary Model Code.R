@@ -13,30 +13,41 @@ source(here("R/Pull Data.R"))
 
 # Explore Data ======================
 Model_dat
-
+dev.off()
+par(mar = c(0,0,1,0))
+par(mfrow=c(1,1))
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$ENSO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
+plot(Model_dat$bay, Model_dat$PDO_Jan)
 
 # Calculate 
-??ggpairs
 
-# Model_dat %>% dplyr::select(PDO_Jan:GOA_SpringSST_anomaly) %>% GGally::ggpairs()
-
-preds.df <- Model_dat %>% 
-              dplyr::select(PDO_Jan:GOA_SpringSST_anomaly) %>% 
-              dplyr::select(-c(region, source_dataset, mo))
-
-cor.preds <- preds.df %>% na.omit() %>% cor() %>% corrplot::corrplot.mixed()
-
-# Example predictor correlations for GAMs below
+dev.new()
+# Example predictor correlations for GAMs below (Nushagak)
 Model_dat %>% dplyr::select(June_temp_anomaly, 
                            June_cumwind_anomaly,
                            PDO_Jan, PDO_May,
                            ENSO_May,
                            mean_pressure_June,
                            extent, NushagakDistrict_meanflow_June,
-                           GOA_SpringSST_anomaly) %>% na.omit() %>% 
+                           GOA_SpringSST_anomaly, Nushagak_JuneSST) %>% na.omit() %>% 
          cor() %>% corrplot::corrplot.mixed()
 
-s(June_temp_anomaly) + June_cumwind_anomaly + s(PDO_May) + s(ENSO_May)+ mean_pressure_June+extent+s(GOA_SpringSST_anomaly)
+###Well in general, PDO and ENSO are correlated fairly heavily, particularly with themselves if we were to use January 
+#may values.  Additionally, there are strong correlations between the different SST metrics, as well as with sea
+#ice extent (As I would expect, more sea ice should equal colder SSTs).  Beyond this, if we only select one metric 
+#for things like wind and air temperature, the correlations are largely pretty small.  
+
+#When plotting a number of these predictors agaisnt return timing, there are very few with clear relationships.  
+#Most look like a shotgun blast, and do not seem to be super helpful in modeling return timing.  
 
 ###Linear model
 
@@ -104,6 +115,8 @@ summary(model_1t)
 visreg(model_1t)
 
 
+###The linear models do a really poor job of fitting to the data.  This seems to follow from the previous shotgun 
+#observation.  Im afraid these data are missing the factors that are actually driving the observed variability.
 
 
 ###GAMS
@@ -147,9 +160,9 @@ visreg(model_2k)
 
 
 model_2n <- gam(Nush  ~ June_temp_anomaly + s(NushagakDistrict_meanflow_June) + Nushagak_JuneSST + June_cumwind_anomaly + 
-                  PDO_Jan + PDO_May + ENSO_Jan + mean_pressure_June+extent + s(GOA_SpringSST_anomaly) + Kvichakproportion+ s(YEAR), 
-                data = Model_dat, na.action = na.omit)
-summary(model_2n)
+                  PDO_Jan + PDO_May + ENSO_Jan + mean_pressure_June+extent + Igushikproportion + s(GOA_SpringSST_anomaly) + s(YEAR), 
+                 data = Model_dat, na.action = na.omit)
+summary(model_2n)0
 plot(residuals(model_2n))
 par(mfrow=c(2,2))
 gam.check(model_2n)
@@ -157,7 +170,7 @@ visreg(model_2n)
 
 
 model_2t <- gam(Tog ~ June_temp_anomaly + s(Togiak_meanflow_June) + Togiak_JuneSST + June_cumwind_anomaly + 
-                  PDO_Jan + PDO_May + ENSO_Jan + mean_pressure_June+extent + s(GOA_SpringSST_anomaly) + Kvichakproportion+ s(YEAR), 
+                  PDO_Jan + PDO_May + ENSO_Jan + mean_pressure_June+extent + s(GOA_SpringSST_anomaly) +  s(YEAR), 
                 data = Model_dat, na.action = na.omit)
 summary(model_2t)
 plot(residuals(model_2t))
@@ -167,3 +180,8 @@ visreg(model_2t)
 
 #####
 
+#The gams do a much better job of fitting, PARTICULARLY with the Year effect included.  In looking at the year effect, there appears to 
+#be autocorrelation in the data, with some form of cyclical relationship that are current predictors cannot explain.  
+#Im wondering if we put in an autocorrelation term and see how that contributes, as that can be used in prediction
+#whereas year effect cannot.  Overall, the most important variables seem to vary from system to system, but
+#PDO and extent are the most consistent in explaining variability from year to year.  

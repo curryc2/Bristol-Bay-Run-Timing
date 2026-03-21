@@ -1,8 +1,7 @@
 library (here)
 library (lubridate)
-library(GSODR)
 library (dplyr)
-library (tidyverse)
+
 
 here()#Bristol-Bay-Run-Timing base working directory 
 
@@ -18,11 +17,11 @@ ENSO <-as.data.frame(Index_dat$enso)
 
 source(here("data/get-sst-data.r"))
 
+source(here("data/get-chla-data.r"))
 
 source(here("data/get-airport-data.r"))
 
-Airport_dat <- dplyr::select(king_salmon_data,YEAR,MONTH,DAY,WDSP,SLP,TEMP) ##select and compile data 
-
+Pink_abundance <- read.csv(here("data/Pink Salmon Abundance.csv"))
 
 ICE_ext <- read.csv(here("data/Ice Extent.csv")) #csv file from NOAA
 ICE_ext <- ICE_ext %>%
@@ -62,25 +61,32 @@ Togiak_CPUE <- as.data.frame(CPUE_Dist[,5,])
 June_dat <- filter(Airport_dat, MONTH==6)
 June_datmeans <- June_dat %>% group_by(YEAR) %>%
   summarise(
-    mean_temp_June = mean(TEMP, na.rm = TRUE),
-    mean_wind_June = mean(WDSP, na.rm = TRUE),
-    cumulative_wind_June = sum(WDSP, na.rm = TRUE),
-    mean_pressure_June = mean(SLP, na.rm = TRUE),
+    mean_temp_June = mean(HourlyDryBulbTemperature, na.rm = TRUE),
+    mean_eastwind_June = mean(Wind_East, na.rm = TRUE),
+    cumulative_eastwind_June = sum(Wind_East, na.rm = TRUE),
+    mean_northwind_June = mean(Wind_North, na.rm = TRUE),
+    cumulative_northwind_June = sum(Wind_North, na.rm = TRUE),
+    mean_pressure_June = mean(HourlySeaLevelPressure, na.rm = TRUE),
   )
 
-July_dat <- filter(Airport_dat, MONTH==7 & DAY<=15)
-July_datmeans <- July_dat %>% group_by(YEAR) %>%
-  summarise(
-    mean_temp_July = mean(TEMP, na.rm = TRUE),
-    mean_wind_July = mean(WDSP, na.rm = TRUE),
-    cumulative_wind_July = sum(WDSP, na.rm = TRUE),
-    mean_pressure_July = mean(SLP, na.rm = TRUE),
-  )
+# July_dat <- filter(Airport_dat, MONTH==6)
+# July_datmeans <- July_dat %>% group_by(YEAR) %>%
+#   summarise(
+#     mean_temp_July = mean(HourlyDryBulbTemperature, na.rm = TRUE),
+#     mean_eastwind_July = mean(Wind_East, na.rm = TRUE),
+#     cumulative_eastwind_July = sum(Wind_East, na.rm = TRUE),
+#     mean_northwind_July = mean(Wind_North, na.rm = TRUE),
+#     cumulative_northwind_July = sum(Wind_North, na.rm = TRUE),
+#     mean_pressure_July = mean(HourlySeaLevelPressure, na.rm = TRUE),
+#   )
 
 
 ######Clean up data and combine into a data frame to generate models from
-Model_dat <- cbind(PDO, ENSO, June_datmeans, July_datmeans[,2:4])
+Model_dat <- cbind(PDO, ENSO, June_datmeans)
 Model_dat <- full_join(Model_dat, ICE_ext, by= "YEAR")
+Model_dat <- full_join(Model_dat, ChlA_meantiming_GOA, by= "YEAR")
+Model_dat <- full_join(Model_dat, ChlA_meanmagnitude_GOA, by= "YEAR")
+Model_dat <- full_join(Model_dat, Pink_abundance, by= "YEAR")
 Model_dat <- full_join(Model_dat, SST_means, by= "YEAR")
 Model_dat <- full_join(Model_dat, Streamflow_June_means, by= "YEAR")
 Model_dat <- full_join(Model_dat, River_Proportions, by= "YEAR")
@@ -95,17 +101,17 @@ Model_dat <- Model_dat %>%
 
 
 #Calculate anomaly (from mean of available time series) for SST, Air temp, wind (cumulative anomaly?)
-
-Model_dat$GOA_SpringSST_anomaly <- Model_dat$GOA_SpringSST-mean(Model_dat$GOA_SpringSST, na.rm=TRUE)
-Model_dat$BB_JuneSST_anomaly <- Model_dat$BB_JuneSST-mean(Model_dat$BB_JuneSST, na.rm=TRUE)
-Model_dat$June_temp_anomaly <- Model_dat$mean_temp_June-mean(Model_dat$mean_temp_June, na.rm=TRUE)
-Model_dat$July_temp_anomaly <- Model_dat$mean_temp_July-mean(Model_dat$mean_temp_July, na.rm=TRUE)
-
-Model_dat$June_wind_anomaly <- Model_dat$mean_wind_June-mean(Model_dat$mean_wind_June, na.rm=TRUE)
-Model_dat$June_cumwind_anomaly <- Model_dat$cumulative_wind_June-mean(Model_dat$cumulative_wind_June, na.rm=TRUE)
-Model_dat$July_wind_anomaly <- Model_dat$mean_wind_July-mean(Model_dat$mean_wind_July, na.rm=TRUE)
-Model_dat$July_cumwind_anomaly <- Model_dat$cumulative_wind_July-mean(Model_dat$cumulative_wind_July, na.rm=TRUE)
-
+# 
+# Model_dat$GOA_SpringSST_anomaly <- Model_dat$GOA_SpringSST-mean(Model_dat$GOA_SpringSST, na.rm=TRUE)
+# Model_dat$BB_JuneSST_anomaly <- Model_dat$BB_JuneSST-mean(Model_dat$BB_JuneSST, na.rm=TRUE)
+# Model_dat$June_temp_anomaly <- Model_dat$mean_temp_June-mean(Model_dat$mean_temp_June, na.rm=TRUE)
+# # Model_dat$July_temp_anomaly <- Model_dat$mean_temp_July-mean(Model_dat$mean_temp_July, na.rm=TRUE)
+# # 
+# # Model_dat$June_wind_anomaly <- Model_dat$mean_wind_June-mean(Model_dat$mean_wind_June, na.rm=TRUE)
+# # Model_dat$June_cumwind_anomaly <- Model_dat$cumulative_wind_June-mean(Model_dat$cumulative_wind_June, na.rm=TRUE)
+# # # Model_dat$July_wind_anomaly <- Model_dat$mean_wind_July-mean(Model_dat$mean_wind_July, na.rm=TRUE)
+# # # Model_dat$July_cumwind_anomaly <- Model_dat$cumulative_wind_July-mean(Model_dat$cumulative_wind_July, na.rm=TRUE)
+# # # 
 
 
 
