@@ -18,7 +18,7 @@ ChlA_timing_GOA <- ChlA_GOA %>% filter(type=="tm1") %>% rename(YEAR = year)
 ChlA_magnitude_GOA <- ChlA_GOA %>% filter(type=="chlm1") %>% rename(YEAR = year)
 
 
-ChlA_meantiming_GOA <- as.data.frame(ChlA_timing_GOA) %>% group_by(YEAR) %>%
-  summarise(ChlA_GOAmeantiming = median(value, na.rm = TRUE))
-ChlA_meanmagnitude_GOA <- as.data.frame(ChlA_magnitude_GOA) %>% group_by(YEAR) %>%
-  summarise(ChlA_GOAmeanmagnitude = median(value, na.rm = TRUE))
+ChlA_timing_GOA <- as.data.frame(ChlA_timing_GOA) %>% group_by(YEAR) %>%
+  summarise(ChlA_GOAtiming = median(value, na.rm = TRUE))
+ChlA_magnitude_GOA <- as.data.frame(ChlA_magnitude_GOA) %>% group_by(YEAR) %>%
+  summarise(ChlA_GOAmagnitude = median(value, na.rm = TRUE))
