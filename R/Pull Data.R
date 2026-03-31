@@ -151,33 +151,32 @@ Model_dat$June_cumnorthwind_anomaly <- Model_dat$cumulative_northwind_June-mean(
  
  ####Break up model_dat for each of the systems so there arent so many covariates in the data frame.  Right now these use anomalies
 
- Model_dat_Uga <- Model_dat %>% dplyr::select(Uga, Uga_lag1, Ugashik_meanflow_June, June_temp_anomaly, 
+ Model_dat_Uga <- Model_dat %>% dplyr::select(YEAR,Uga, Uga_lag1, Ugashik_meanflow_June, June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                               ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
                                               June_pressure_anomaly,extent,
                                               GOA_SpringSST_anomaly,Uga_tempdiff)
  
- Model_dat_Ege <- Model_dat %>% dplyr::select(Ege, Ege_lag1, Egegik_meanflow_June,June_temp_anomaly, 
+ Model_dat_Ege <- Model_dat %>% dplyr::select(YEAR,Ege, Ege_lag1, Egegik_meanflow_June,June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
-                                              ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
+                                              ChlA_GOAmagnitude,ChlA_GOAtiming,ENSO_May, Abundance,
                                               June_pressure_anomaly,extent,
                                               GOA_SpringSST_anomaly, Ege_tempdiff)
  
- Model_dat_Kvi <- Model_dat %>% dplyr::select(Nak.Kvi, Nak.Kvi_lag1,KvichakDistrict_meanflow_June, June_temp_anomaly, 
+ Model_dat_Kvi <- Model_dat %>% dplyr::select(YEAR,Nak.Kvi, Nak.Kvi_lag1,KvichakDistrict_meanflow_June, June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                               ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
                                               June_pressure_anomaly,extent,
                                               GOA_SpringSST_anomaly, Kvichakproportion, Kvi_tempdiff)
  
- Model_dat_Nush <- Model_dat %>% dplyr::select(Nush, Nush_lag1, NushagakDistrict_meanflow_June, June_temp_anomaly, 
+ Model_dat_Nush <- Model_dat %>% dplyr::select(YEAR,Nush, Nush_lag1, NushagakDistrict_meanflow_June, June_temp_anomaly, 
                                                June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
-                                               ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
+                                               ChlA_GOAmagnitude,ChlA_GOAtiming,ENSO_May, Abundance,
                                                June_pressure_anomaly,extent,
                                                GOA_SpringSST_anomaly,Igushikproportion, Nush_tempdiff)
  
- Model_dat_Tog <- Model_dat %>% dplyr::select(Tog, Tog_lag1, Togiak_meanflow_June, June_temp_anomaly, 
+ Model_dat_Tog <- Model_dat %>% dplyr::select(YEAR,Tog, Tog_lag1, Togiak_meanflow_June, June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                               ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
                                               June_pressure_anomaly,extent,
-                                              GOA_SpringSST_anomaly, Tog_tempdiff,BB_JuneSST_anomaly)
-
+                                              GOA_SpringSST_anomaly, Tog_tempdiff)
