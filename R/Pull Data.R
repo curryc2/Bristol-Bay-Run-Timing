@@ -69,20 +69,6 @@ June_datmeans <- June_dat %>% group_by(YEAR) %>%
     mean_pressure_June = mean(HourlySeaLevelPressure, na.rm = TRUE),
   )
 
-#If we want to use July, we can also do that
-
-# July_dat <- filter(Airport_dat, MONTH==7)
-# July_datmeans <- July_dat %>% group_by(YEAR) %>%
-#   summarise(
-#     mean_temp_July = mean(HourlyDryBulbTemperature, na.rm = TRUE),
-#     mean_eastwind_July = mean(Wind_East, na.rm = TRUE),
-#     cumulative_eastwind_July = sum(Wind_East, na.rm = TRUE),
-#     mean_northwind_July = mean(Wind_North, na.rm = TRUE),
-#     cumulative_northwind_July = sum(Wind_North, na.rm = TRUE),
-#     mean_pressure_July = mean(HourlySeaLevelPressure, na.rm = TRUE),
-#   )
-
-
 #Spring temperatures for proxy to river temps, differential between nearshore and river
 Spring_dat <- filter(Airport_dat, MONTH==c(4,5))
 Spring_datmeans <- Spring_dat %>% group_by(YEAR) %>%
@@ -120,63 +106,58 @@ Model_dat$Nush_JuneSST_anomaly <- Model_dat$Nushagak_JuneSST-mean(Model_dat$Nush
 Model_dat$Tog_JuneSST_anomaly <- Model_dat$Togiak_JuneSST-mean(Model_dat$Togiak_JuneSST, na.rm=TRUE)
 
 
-#Z score and find the sum of spring air temp and SST to proxy the difference in temperatures at the fresh/saltwater interface
-Model_dat <- Model_dat %>% mutate(z_springtemp = as.numeric(scale(cumulative_temp_spring)))   
-Model_dat <- Model_dat %>% mutate(z_UgaSST = as.numeric(scale(Model_dat$Ugashik_JuneSST)))
-Model_dat <- Model_dat %>% mutate(z_EgeSST = as.numeric(scale(Egegik_JuneSST)))
-Model_dat <- Model_dat %>% mutate(z_KviSST = as.numeric(scale(Kvichak_JuneSST)))
-Model_dat <- Model_dat %>% mutate(z_NushSST = as.numeric(scale(Nushagak_JuneSST)))
-Model_dat <- Model_dat %>% mutate(z_TogSST = as.numeric(scale(Togiak_JuneSST)))
-
-Model_dat$Uga_tempdiff <- Model_dat$z_UgaSST + Model_dat$z_springtemp
-Model_dat$Ege_tempdiff <- Model_dat$z_EgeSST + Model_dat$z_springtemp
-Model_dat$Kvi_tempdiff <- Model_dat$z_KviSST + Model_dat$z_springtemp
-Model_dat$Nush_tempdiff <- Model_dat$z_NushSST + Model_dat$z_springtemp
-Model_dat$Tog_tempdiff <- Model_dat$z_TogSST + Model_dat$z_springtemp
+# #Z score and find the sum of spring air temp and SST to proxy the difference in temperatures at the fresh/saltwater interface
+# Model_dat <- Model_dat %>% mutate(z_springtemp = as.numeric(scale(cumulative_temp_spring)))   
+# Model_dat <- Model_dat %>% mutate(z_UgaSST = as.numeric(scale(Model_dat$Ugashik_JuneSST)))
+# Model_dat <- Model_dat %>% mutate(z_EgeSST = as.numeric(scale(Egegik_JuneSST)))
+# Model_dat <- Model_dat %>% mutate(z_KviSST = as.numeric(scale(Kvichak_JuneSST)))
+# Model_dat <- Model_dat %>% mutate(z_NushSST = as.numeric(scale(Nushagak_JuneSST)))
+# Model_dat <- Model_dat %>% mutate(z_TogSST = as.numeric(scale(Togiak_JuneSST)))
+# 
+# Model_dat$Uga_tempdiff <- Model_dat$z_UgaSST + Model_dat$z_springtemp
+# Model_dat$Ege_tempdiff <- Model_dat$z_EgeSST + Model_dat$z_springtemp
+# Model_dat$Kvi_tempdiff <- Model_dat$z_KviSST + Model_dat$z_springtemp
+# Model_dat$Nush_tempdiff <- Model_dat$z_NushSST + Model_dat$z_springtemp
+# Model_dat$Tog_tempdiff <- Model_dat$z_TogSST + Model_dat$z_springtemp
 
 #Airport data anomalies 
 Model_dat$June_temp_anomaly <- Model_dat$mean_temp_June-mean(Model_dat$mean_temp_June, na.rm=TRUE)
 Model_dat$June_pressure_anomaly <- Model_dat$mean_pressure_June-mean(Model_dat$mean_pressure_June, na.rm=TRUE)
-Model_dat$June_pressure_anomaly <- Model_dat$mean_eastwind_June-mean(Model_dat$mean_eastwind_June, na.rm=TRUE)
 Model_dat$June_cumeastwind_anomaly <- Model_dat$cumulative_eastwind_June-mean(Model_dat$cumulative_eastwind_June, na.rm=TRUE)
-Model_dat$June_northwind_anomaly <- Model_dat$mean_northwind_June-mean(Model_dat$mean_northwind_June, na.rm=TRUE)
 Model_dat$June_cumnorthwind_anomaly <- Model_dat$cumulative_northwind_June-mean(Model_dat$cumulative_northwind_June, na.rm=TRUE)
- 
-###If July is used
-### Model_dat$July_temp_anomaly <- Model_dat$mean_temp_July-mean(Model_dat$mean_temp_July, na.rm=TRUE)
-### Model_dat$July_wind_anomaly <- Model_dat$mean_wind_July-mean(Model_dat$mean_wind_July, na.rm=TRUE)
-### Model_dat$July_cumwind_anomaly <- Model_dat$cumulative_wind_July-mean(Model_dat$cumulative_wind_July, na.rm=TRUE)
 
  
- 
  ####Break up model_dat for each of the systems so there arent so many covariates in the data frame.  Right now these use anomalies
+#I have the tempdiff data removed due to heavy correlation with other parameters.  Its also the 
+#hardest to understand and interpret
+
 
  Model_dat_Uga <- Model_dat %>% dplyr::select(YEAR,Uga, Uga_lag1, Ugashik_meanflow_June, June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                               ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
                                               June_pressure_anomaly,extent,
-                                              GOA_SpringSST_anomaly,Uga_tempdiff)
+                                              GOA_SpringSST_anomaly, Uga_JuneSST_anomaly) #Uga_tempdiff
  
  Model_dat_Ege <- Model_dat %>% dplyr::select(YEAR,Ege, Ege_lag1, Egegik_meanflow_June,June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                               ChlA_GOAmagnitude,ChlA_GOAtiming,ENSO_May, Abundance,
                                               June_pressure_anomaly,extent,
-                                              GOA_SpringSST_anomaly, Ege_tempdiff)
+                                              GOA_SpringSST_anomaly, Ege_JuneSST_anomaly)  #Ege_tempdiff
  
- Model_dat_Kvi <- Model_dat %>% dplyr::select(YEAR,Nak.Kvi, Nak.Kvi_lag1,KvichakDistrict_meanflow_June, June_temp_anomaly, 
+ Model_dat_Kvi <- Model_dat %>% dplyr::select(YEAR,Kvi, Kvi_lag1,KvichakDistrict_meanflow_June, June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                               ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
                                               June_pressure_anomaly,extent,
-                                              GOA_SpringSST_anomaly, Kvichakproportion, Kvi_tempdiff)
+                                              GOA_SpringSST_anomaly, Kvichakproportion,Kvi_JuneSST_anomaly) #Kvi_tempdiff 
  
  Model_dat_Nush <- Model_dat %>% dplyr::select(YEAR,Nush, Nush_lag1, NushagakDistrict_meanflow_June, June_temp_anomaly, 
                                                June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                                ChlA_GOAmagnitude,ChlA_GOAtiming,ENSO_May, Abundance,
                                                June_pressure_anomaly,extent,
-                                               GOA_SpringSST_anomaly,Igushikproportion, Nush_tempdiff)
+                                               GOA_SpringSST_anomaly,Igushikproportion, Nush_JuneSST_anomaly)  #Nush_tempdiff
  
  Model_dat_Tog <- Model_dat %>% dplyr::select(YEAR,Tog, Tog_lag1, Togiak_meanflow_June, June_temp_anomaly, 
                                               June_cumeastwind_anomaly,June_cumnorthwind_anomaly,PDO_Jan, ENSO_Jan, PDO_May,
                                               ENSO_May, ChlA_GOAmagnitude,ChlA_GOAtiming, Abundance,
                                               June_pressure_anomaly,extent,
-                                              GOA_SpringSST_anomaly, Tog_tempdiff)
+                                              GOA_SpringSST_anomaly, Tog_JuneSST_anomaly)  #Tog_tempdiff

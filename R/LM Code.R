@@ -21,142 +21,163 @@ source(here("R/Pull Data.R"))
 
 ####Ugashik 
 
-model_1u <- lm(Uga ~ Uga_lag1 + June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan + PDO_May +ENSO_Jan +# ChlA_GOAtiming + ChlA_GOAmagnitude +
-                 June_pressure_anomaly + Uga_tempdiff + extent + Abundance + 
-                 GOA_SpringSST_anomaly + Ugashik_meanflow_June, 
-               data = Model_dat_Uga, na.action = na.omit)
-summary(model_1u)
-#visreg(model_1u)
-
 #I brute force created the full model set using the above covariates, then selected the model with the lowest AIC.  That is provided 
 #below.
 
-#Uga~ Uga_lag1 + June_temp_anomaly + PDO_May + ChlA_GOAtiming +Uga_tempdiff + extent
+#Uga~ PDO_May + ChlA_GOAmagnitude + June_pressure_anomaly + extent +GOA_SpringSST_anomaly + Ugashik_meanflow_June + Uga_JuneSST_anomaly
 
-model_bestu <- lm(Uga ~ Uga_lag1 + June_temp_anomaly + PDO_May + ChlA_GOAtiming +Uga_tempdiff + extent,
+model_bestu <- lm(Uga ~ PDO_May + ChlA_GOAmagnitude + June_pressure_anomaly + extent +
+                    GOA_SpringSST_anomaly + Ugashik_meanflow_June + Uga_JuneSST_anomaly,
                data = Model_dat_Uga, na.action = na.omit)
 summary(model_bestu)
 plot(residuals(model_bestu))
-#visreg(model_bestu)
 
-#This looks WAYYYYY better.  Maybe this is the model structure we employ in our bayesian approach?   I am going to try this for
-#each of the districts, lets see how consistent this is from district to district.  
+#adj r2 .7922
+
+#visreg(model_bestu)
 
 
 ####Egegik
-model_1e <- lm(Ege  ~ Ege_lag1 + June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan + PDO_May +ENSO_Jan + #ChlA_GOAtiming + ChlA_GOAmagnitude +
-                 June_pressure_anomaly + Ege_tempdiff + extent + Abundance + 
-                 GOA_SpringSST_anomaly + Egegik_meanflow_June, 
-               data = Model_dat_Ege, na.action = na.omit)
-summary(model_1e)
-plot(residuals(model_bestu))
-#visreg(model_1e)
-#Best is Ege ~ June_cumeastwind_anomaly + PDO_Jan + PDO_May + ENSO_Jan +ChlA_GOAtiming + ChlA_GOAmagnitude + extent + Abundance +Egegik_meanflow_June
 
-model_beste <- lm(Ege ~ June_cumeastwind_anomaly + PDO_Jan + PDO_May + ENSO_Jan +ChlA_GOAtiming + 
-                 ChlA_GOAmagnitude + extent + Abundance +Egegik_meanflow_June,
+#Best is Ege ~ June_cumeastwind_anomaly + June_cumnorthwind_anomaly +  PDO_May + ChlA_GOAmagnitude + June_pressure_anomaly + extent + Abundance + GOA_SpringSST_anomaly + Egegik_meanflow_June +  Ege_JuneSST_anomaly
+
+model_beste <- lm(Ege ~ June_cumeastwind_anomaly + June_cumnorthwind_anomaly +  PDO_May + ChlA_GOAmagnitude + June_pressure_anomaly + 
+                    extent + Abundance + GOA_SpringSST_anomaly + Egegik_meanflow_June +  Ege_JuneSST_anomaly,
                data = Model_dat_Ege, na.action = na.omit)
 summary(model_beste)
 plot(residuals(model_beste))
 #visreg(model_beste)
 
-#Again, really good.  However, lets remember this is only using the past 20 years where there is ChlA data....
+#adj r2 .864
 
 
 
 ####Kvichak
 
-model_1k <- lm(Nak.Kvi  ~ Nak.Kvi_lag1 + June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan + PDO_May +ENSO_Jan +# ChlA_GOAtiming + ChlA_GOAmagnitude +
-                 June_pressure_anomaly + Kvi_tempdiff + extent + Abundance + 
-                 GOA_SpringSST_anomaly + KvichakDistrict_meanflow_June + Kvichakproportion, 
-               data = Model_dat_Kvi, na.action = na.omit)
-summary(model_1k)
-plot(residuals(model_beste))
-#visreg(model_1k)
+#Best is Kvi ~ Kvi_lag1 + PDO_May + ENSO_May + ChlA_GOAmagnitude + ChlA_GOAtiming +extent + GOA_SpringSST_anomaly + KvichakDistrict_meanflow_June + Kvichakproportion + Kvi_JuneSST_anomaly
 
-#Best is Nak.Kvi ~ PDO_May + ChlA_GOAtiming + ChlA_GOAmagnitude + extent + Kvichakproportion
-
-model_bestk <- lm(Nak.Kvi ~ PDO_May + ChlA_GOAtiming + ChlA_GOAmagnitude + extent + Kvichakproportion, 
+model_bestk <- lm(Kvi ~ Kvi_lag1 + PDO_May + ENSO_May + ChlA_GOAmagnitude + ChlA_GOAtiming +
+                    extent + GOA_SpringSST_anomaly + KvichakDistrict_meanflow_June + Kvichakproportion + Kvi_JuneSST_anomaly, 
                data = Model_dat_Kvi, na.action = na.omit)
 summary(model_bestk)
 plot(residuals(model_bestk))
 #visreg(model_bestk)
 
+#adj r2 .8434
 
 
 ####Nushagak
 
-model_1n <- lm(Nush ~ Nush_lag1 + June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan + PDO_May +ENSO_Jan + #ChlA_GOAtiming + ChlA_GOAmagnitude +
-                 June_pressure_anomaly + Nush_tempdiff + extent + Abundance + 
-                 GOA_SpringSST_anomaly + NushagakDistrict_meanflow_June + Igushikproportion, 
-               data = Model_dat_Nush, na.action = na.omit)
-summary(model_1n)
-plot(residuals(model_bestk))
-#visreg(model_1n)
-
-#Best is Nush ~ June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan +ENSO_Jan + ChlA_GOAtiming + ChlA_GOAmagnitude + June_pressure_anomaly +Nush_tempdiff + extent + Abundance
+#Best is Nush ~ Nush_lag1 + June_temp_anomaly + June_cumeastwind_anomaly +June_cumnorthwind_anomaly + PDO_May + ENSO_May + ChlA_GOAmagnitude +ChlA_GOAtiming + June_pressure_anomaly + extent + GOA_SpringSST_anomaly +NushagakDistrict_meanflow_June + Igushikproportion + Nush_JuneSST_anomaly
 
 
-model_bestn <- lm(Nush ~ June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan +ENSO_Jan + ChlA_GOAtiming + 
-                 ChlA_GOAmagnitude + June_pressure_anomaly +Nush_tempdiff + extent + Abundance, 
+model_bestn <- lm(Nush ~ Nush_lag1 + June_temp_anomaly + June_cumeastwind_anomaly +
+                    June_cumnorthwind_anomaly + PDO_May + ENSO_May + ChlA_GOAmagnitude +
+                    ChlA_GOAtiming + June_pressure_anomaly + extent + GOA_SpringSST_anomaly +
+                    NushagakDistrict_meanflow_June + Igushikproportion + Nush_JuneSST_anomaly, 
                data = Model_dat_Nush, na.action = na.omit)
 summary(model_bestn)
 plot(residuals(model_bestn))
 #visreg(model_bestn)
 
+#adj r2 .907
 
 
 ####Togiak
 
-model_1t <- lm(Tog ~ Tog_lag1 + June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan + PDO_May +ENSO_Jan + ENSO_May +# ChlA_GOAtiming + ChlA_GOAmagnitude +
-                 June_pressure_anomaly + Tog_tempdiff + extent + Abundance + 
-                 GOA_SpringSST_anomaly + Togiak_meanflow_June, 
-               data = Model_dat_Tog, na.action = na.omit)
-summary(model_1t)
-#visreg(model_1t)
+#Best is Tog ~ Tog_lag1 + June_temp_anomaly + June_cumeastwind_anomaly + June_cumnorthwind_anomaly + PDO_May + ENSO_May + ChlA_GOAmagnitude +June_pressure_anomaly + extent + Abundance + GOA_SpringSST_anomaly +Togiak_meanflow_June
 
-#Best is Tog ~ June_temp_anomaly + PDO_May + ChlA_GOAmagnitude + June_pressure_anomaly +extent + GOA_SpringSST_anomaly + Togiak_meanflow_June
-
-model_bestt <- lm(Tog ~ June_temp_anomaly + PDO_May + ChlA_GOAmagnitude + June_pressure_anomaly +extent + 
-                    GOA_SpringSST_anomaly + Togiak_meanflow_June, 
+model_bestt <- lm(Tog ~ Tog_lag1 + June_temp_anomaly + June_cumeastwind_anomaly + June_cumnorthwind_anomaly + 
+                    PDO_May + ENSO_May + ChlA_GOAmagnitude +June_pressure_anomaly + 
+                    extent + Abundance + GOA_SpringSST_anomaly +Togiak_meanflow_June, 
                data = Model_dat_Tog, na.action = na.omit)
 summary(model_bestt)
 plot(residuals(model_bestt))
 #visreg(model_bestt)
 
+#adj r2 .8237
 
 
 
 
-###The linear models do a really poor job of fitting to the data.  There are almost no predictors that are statistically 
-#significant.  Part of this may be due to the ChlA data being so short.  Im going to remove these and refit.  
-
-#Without these data the fits are still pretty terrible, maybe even more so using the full time series.  For most covariates, 
-#the relationships look like a shotgun blast. Im afraid these data are missing the factors that are actually driving the 
-#observed variability.  Lets look at Gams.  
-
-
-
+# # Ugashik Code for testing all combinations of predictors and selecting the best model via AIC
 # 
-# #Code for testing all combinations of predictors and selecting the best model via AIC
-# 
-# vars <- c(   #Currently the Nushagak predictors are included
-#   "Nush_lag1",
+# vars <- c(  
+#   "Uga_lag1",
 #   "June_temp_anomaly",
 #   "June_cumeastwind_anomaly",
-#   "PDO_Jan",
+#   "June_cumnorthwind_anomaly",
 #   "PDO_May",
-#   "ENSO_Jan",
 #   "ENSO_May",
 #   "ChlA_GOAmagnitude",
 #   "ChlA_GOAtiming",
 #   "June_pressure_anomaly",
-#   "Nush_tempdiff",
 #   "extent",
 #   "Abundance",
 #   "GOA_SpringSST_anomaly",
-#   "NushagakDistrict_meanflow_June"
+#   "Ugashik_meanflow_June",
+#   "Uga_JuneSST_anomaly"
 # )
+# 
+# 
+# results <- data.frame(
+#   model = character(),
+#   AIC = numeric(),
+#   R2 = numeric(),
+#   stringsAsFactors = FALSE
+# )
+# models <- list()
+# 
+# k <- 1
+# 
+# for (i in 1:length(vars)) {
+#   combos <- combn(vars, i, simplify = FALSE)
+# 
+#   for (combo in combos) {
+# 
+#     formula <- as.formula(
+#       paste("Uga ~", paste(combo, collapse = " + "))####
+#     )
+# 
+#     fit <- lm(formula, data = Model_dat_Uga, na.action = na.omit)
+# 
+#     results <- rbind(results, data.frame(
+#       model = deparse(formula),
+#       AIC = AIC(fit),
+#       R2 = summary(fit)$r.squared
+#     ))
+# 
+#     models[[k]] <- fit
+#     k <- k + 1
+#   }
+# }
+# 
+# 
+# results <- results[order(results$AIC), ]
+# 
+# # Show top models
+# head(results)
+
+# 
+# # Egegik Code for testing all combinations of predictors and selecting the best model via AIC
+# 
+# vars <- c(   #Currently the Nushagak predictors are included
+#   "Ege_lag1",####
+#   "June_temp_anomaly",
+#   "June_cumeastwind_anomaly",
+#   "June_cumnorthwind_anomaly",
+#   "PDO_May",
+#   "ENSO_May",
+#   "ChlA_GOAmagnitude",
+#   "ChlA_GOAtiming",
+#   "June_pressure_anomaly",
+#   "extent",
+#   "Abundance",
+#   "GOA_SpringSST_anomaly",
+#   "Egegik_meanflow_June",
+#   "Ege_JuneSST_anomaly"###
+# )
+# 
 # 
 # results <- data.frame(
 #   model = character(),
@@ -174,10 +195,10 @@ plot(residuals(model_bestt))
 #   for (combo in combos) {
 #     
 #     formula <- as.formula(
-#       paste("Nush ~", paste(combo, collapse = " + "))
+#       paste("Ege ~", paste(combo, collapse = " + "))####
 #     )
 #     
-#     fit <- lm(formula, data = Model_dat_Nush, na.action = na.omit)
+#     fit <- lm(formula, data = Model_dat_Ege, na.action = na.omit)
 #     
 #     results <- rbind(results, data.frame(
 #       model = deparse(formula),
@@ -197,5 +218,185 @@ plot(residuals(model_bestt))
 # head(results)
 
 
+
+# 
+# #Kvichak Code for testing all combinations of predictors and selecting the best model via AIC
+# 
+# vars <- c(  
+#   "Kvi_lag1",####
+#   "June_temp_anomaly",
+#   "June_cumeastwind_anomaly",
+#   "June_cumnorthwind_anomaly",
+#   "PDO_May",
+#   "ENSO_May",
+#   "ChlA_GOAmagnitude",
+#   "ChlA_GOAtiming",
+#   "June_pressure_anomaly",
+#   "extent",
+#   "Abundance",
+#   "GOA_SpringSST_anomaly",
+#   "KvichakDistrict_meanflow_June",###
+#   "Kvichakproportion",####
+#   "Kvi_JuneSST_anomaly"###
+# )
+# 
+# 
+# results <- data.frame(
+#   model = character(),
+#   AIC = numeric(),
+#   R2 = numeric(),
+#   stringsAsFactors = FALSE
+# )
+# models <- list()
+# 
+# k <- 1
+# 
+# for (i in 1:length(vars)) {
+#   combos <- combn(vars, i, simplify = FALSE)
+#   
+#   for (combo in combos) {
+#     
+#     formula <- as.formula(
+#       paste("Kvi ~", paste(combo, collapse = " + "))####
+#     )
+#     
+#     fit <- lm(formula, data = Model_dat_Kvi, na.action = na.omit)
+#     
+#     results <- rbind(results, data.frame(
+#       model = deparse(formula),
+#       AIC = AIC(fit),
+#       R2 = summary(fit)$r.squared
+#     ))
+#     
+#     models[[k]] <- fit
+#     k <- k + 1
+#   }
+# }
+# 
+# 
+# results <- results[order(results$AIC), ]
+# 
+# # Show top models
+# head(results)
+
+
+# # Nushagak Code for testing all combinations of predictors and selecting the best model via AIC
+
+vars <- c(
+  "Nush_lag1",####
+  "June_temp_anomaly",
+  "June_cumeastwind_anomaly",
+  "June_cumnorthwind_anomaly",
+  "PDO_May",
+  "ENSO_May",
+  "ChlA_GOAmagnitude",
+  "ChlA_GOAtiming",
+  "June_pressure_anomaly",
+  "extent",
+  "Abundance",
+  "GOA_SpringSST_anomaly",
+  "NushagakDistrict_meanflow_June",
+  "Igushikproportion",
+  "Nush_JuneSST_anomaly"###
+)
+
+
+results <- data.frame(
+  model = character(),
+  AIC = numeric(),
+  R2 = numeric(),
+  stringsAsFactors = FALSE
+)
+models <- list()
+
+k <- 1
+
+for (i in 1:length(vars)) {
+  combos <- combn(vars, i, simplify = FALSE)
+
+  for (combo in combos) {
+
+    formula <- as.formula(
+      paste("Nush ~", paste(combo, collapse = " + "))####
+    )
+
+    fit <- lm(formula, data = Model_dat_Nush, na.action = na.omit)
+
+    results <- rbind(results, data.frame(
+      model = deparse(formula),
+      AIC = AIC(fit),
+      R2 = summary(fit)$r.squared
+    ))
+
+    models[[k]] <- fit
+    k <- k + 1
+  }
+}
+
+
+results <- results[order(results$AIC), ]
+
+# Show top models
+head(results)
+
+
+
+# Togiak Code for testing all combinations of predictors and selecting the best model via AIC
+
+vars <- c(  
+  "Tog_lag1",####
+  "June_temp_anomaly",
+  "June_cumeastwind_anomaly",
+  "June_cumnorthwind_anomaly",
+  "PDO_May",
+  "ENSO_May",
+  "ChlA_GOAmagnitude",
+  "ChlA_GOAtiming",
+  "June_pressure_anomaly",
+  "extent",
+  "Abundance",
+  "GOA_SpringSST_anomaly",
+  "Togiak_meanflow_June",
+  "Tog_JuneSST_anomaly"###
+)
+
+
+results <- data.frame(
+  model = character(),
+  AIC = numeric(),
+  R2 = numeric(),
+  stringsAsFactors = FALSE
+)
+models <- list()
+
+k <- 1
+
+for (i in 1:length(vars)) {
+  combos <- combn(vars, i, simplify = FALSE)
+  
+  for (combo in combos) {
+    
+    formula <- as.formula(
+      paste("Tog ~", paste(combo, collapse = " + "))####
+    )
+    
+    fit <- lm(formula, data = Model_dat_Tog, na.action = na.omit)
+    
+    results <- rbind(results, data.frame(
+      model = deparse(formula),
+      AIC = AIC(fit),
+      R2 = summary(fit)$r.squared
+    ))
+    
+    models[[k]] <- fit
+    k <- k + 1
+  }
+}
+
+
+results <- results[order(results$AIC), ]
+
+# Show top models
+head(results)
 
 

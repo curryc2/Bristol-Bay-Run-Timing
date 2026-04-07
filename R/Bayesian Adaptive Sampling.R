@@ -6,13 +6,15 @@ library(dplyr)
 
 source(here("R/Pull Data.R"))
 
+#after alot of investigation, the January PDO and ENSO are often very low on the inclusion probability
+#and are highly correlated with the May PDO and ENSO.  As such, I am removing them from all models.  
 
 # Ugashik 
 
 
-Model_dat_Uga <- Model_dat_Uga %>% dplyr::select(-YEAR)
+Model_dat_Uga_BAS <- Model_dat_Uga %>% dplyr::select(-c(YEAR, ENSO_Jan, PDO_Jan))
 Ugashik.ZS <- bas.lm(Uga ~ .,
-                   data = Model_dat_Uga,
+                   data = Model_dat_Uga_BAS,
                    prior = "ZS-null",
                    modelprior = uniform(), initprobs = "eplogp",
                    force.heredity = FALSE, pivot = TRUE
@@ -43,13 +45,15 @@ ggsave(filename = paste0("figs/Ugashik Partial Effects/Uga_InclusionProbability.
        height = 4,
        dpi = 300)
 
+R2_avg_uga_ChlA <- sum(Ugashik.ZS$R2 * Ugashik.ZS$postprobs)
+
 
 # Egegik 
 
 
-Model_dat_Ege <- Model_dat_Ege %>% dplyr::select(-YEAR)
+Model_dat_Ege_BAS <- Model_dat_Ege %>% dplyr::select(-c(YEAR, ENSO_Jan, PDO_Jan))
 Egegik.ZS <- bas.lm(Ege ~ .,
-                     data = Model_dat_Ege,
+                     data = Model_dat_Ege_BAS,
                      prior = "ZS-null",
                      modelprior = uniform(), initprobs = "eplogp",
                      force.heredity = FALSE, pivot = TRUE
@@ -80,14 +84,14 @@ ggsave(filename = paste0("figs/Egegik Partial Effects/Ege_InclusionProbability.p
        height = 4,
        dpi = 300)
 
-
+R2_avg_ege_ChlA <- sum(Egegik.ZS$R2 * Egegik.ZS$postprobs)
 
 #Kvichak
 
 
-Model_dat_Kvi <- Model_dat_Kvi %>% dplyr::select(-YEAR)
-Kvichak.ZS <- bas.lm(Nak.Kvi ~ .,
-                    data = Model_dat_Kvi[,-13], #remove abundance, not running with all varaibles and this has never been significant
+Model_dat_Kvi_BAS <- Model_dat_Kvi %>% dplyr::select(-c(YEAR, ENSO_Jan, PDO_Jan))
+Kvichak.ZS <- bas.lm(Kvi ~ .,
+                    data = Model_dat_Kvi_BAS,
                     prior = "ZS-null",
                     modelprior = uniform(), initprobs = "eplogp",
                     force.heredity = FALSE, pivot = TRUE
@@ -118,14 +122,14 @@ ggsave(filename = paste0("figs/Kvichak Partial Effects/Kvi_InclusionProbability.
        height = 4,
        dpi = 300)
 
-
+R2_avg_kvi_ChlA <- sum(Kvichak.ZS$R2 * Kvichak.ZS$postprobs)
 
 # Nushagak
 
 
-Model_dat_Nush <- Model_dat_Nush %>% dplyr::select(-YEAR)
+Model_dat_Nush_BAS <- Model_dat_Nush %>% dplyr::select(-c(YEAR, ENSO_Jan, PDO_Jan))
 Nushagak.ZS <- bas.lm(Nush ~ .,
-                     data = Model_dat_Nush[,-13],#remove abundance, same as above
+                     data = Model_dat_Nush_BAS,
                      prior = "ZS-null",
                      modelprior = uniform(), initprobs = "eplogp",
                      force.heredity = FALSE, pivot = TRUE
@@ -156,13 +160,14 @@ ggsave(filename = paste0("figs/Nushagak Partial Effects/Nush_InclusionProbabilit
        height = 4,
        dpi = 300)
 
+R2_avg_nush_ChlA <- sum(Nushagak.ZS$R2 * Nushagak.ZS$postprobs)
 
 #Togiak
 
 
-Model_dat_Tog <- Model_dat_Tog %>% dplyr::select(-YEAR)
+Model_dat_Tog_BAS <- Model_dat_Tog %>% dplyr::select(-c(YEAR, ENSO_Jan, PDO_Jan))
 Togiak.ZS <- bas.lm(Tog ~ .,
-                      data = Model_dat_Tog,
+                      data = Model_dat_Tog_BAS,
                       prior = "ZS-null",
                       modelprior = uniform(), initprobs = "eplogp",
                       force.heredity = FALSE, pivot = TRUE
@@ -193,7 +198,7 @@ ggsave(filename = paste0("figs/Togiak Partial Effects/Tog_InclusionProbability.p
        height = 4,
        dpi = 300)
 
-
+R2_avg_tog_ChlA <- sum(Togiak.ZS$R2 * Togiak.ZS$postprobs)
 
 
 
@@ -206,9 +211,9 @@ source(here("R/Pull Data.R"))
 # Ugashik 
 
 
-Model_dat_Uga <- Model_dat_Uga %>% dplyr::select(-c(YEAR,ChlA_GOAtiming, ChlA_GOAmagnitude))
+Model_dat_Uga_BAS_noChlA <- Model_dat_Uga %>% dplyr::select(-c(YEAR,PDO_Jan, ENSO_Jan,ChlA_GOAtiming, ChlA_GOAmagnitude))
 Ugashik.ZS <- bas.lm(Uga ~ .,
-                     data = Model_dat_Uga,
+                     data = Model_dat_Uga_BAS_noChlA,
                      prior = "ZS-null",
                      modelprior = uniform(), initprobs = "eplogp",
                      force.heredity = FALSE, pivot = TRUE
@@ -221,6 +226,7 @@ Uga_inclusionprobs <- data.frame(
   Variable = Ugashik.ZS$namesx,
   Inclusion_Prob = Ugashik.ZS$probne0
 )
+
 
 library(ggplot2)
 
@@ -239,13 +245,14 @@ ggsave(filename = paste0("figs/Ugashik Partial Effects/Uga_InclusionProbability_
        height = 4,
        dpi = 300)
 
+R2_avg_uga <- sum(Ugashik.ZS$R2 * Ugashik.ZS$postprobs)
 
 # Egegik 
 
 
-Model_dat_Ege <- Model_dat_Ege %>% dplyr::select(-c(YEAR,ChlA_GOAtiming, ChlA_GOAmagnitude))
+Model_dat_Ege_BAS_noChlA <- Model_dat_Ege %>% dplyr::select(-c(YEAR,PDO_Jan, ENSO_Jan,ChlA_GOAtiming, ChlA_GOAmagnitude))
 Egegik.ZS <- bas.lm(Ege ~ .,
-                    data = Model_dat_Ege,
+                    data = Model_dat_Ege_BAS_noChlA,
                     prior = "ZS-null",
                     modelprior = uniform(), initprobs = "eplogp",
                     force.heredity = FALSE, pivot = TRUE
@@ -276,14 +283,14 @@ ggsave(filename = paste0("figs/Egegik Partial Effects/Ege_InclusionProbability_N
        height = 4,
        dpi = 300)
 
-
+R2_avg_ege <- sum(Egegik.ZS$R2 * Egegik.ZS$postprobs)
 
 #Kvichak
 
 
-Model_dat_Kvi <- Model_dat_Kvi %>% dplyr::select(-c(YEAR,ChlA_GOAtiming, ChlA_GOAmagnitude))
-Kvichak.ZS <- bas.lm(Nak.Kvi ~ .,
-                     data = Model_dat_Kvi[,-13], #remove abundance, not running with all varaibles and this has never been significant
+Model_dat_Kvi_BAS_noChlA <- Model_dat_Kvi %>% dplyr::select(-c(YEAR,PDO_Jan, ENSO_Jan,ChlA_GOAtiming, ChlA_GOAmagnitude))
+Kvichak.ZS <- bas.lm(Kvi ~ .,
+                     data = Model_dat_Kvi_BAS_noChlA,
                      prior = "ZS-null",
                      modelprior = uniform(), initprobs = "eplogp",
                      force.heredity = FALSE, pivot = TRUE
@@ -314,14 +321,14 @@ ggsave(filename = paste0("figs/Kvichak Partial Effects/Kvi_InclusionProbability_
        height = 4,
        dpi = 300)
 
-
+R2_avg_kvi <- sum(Kvichak.ZS$R2 * Kvichak.ZS$postprobs)
 
 # Nushagak
 
 
-Model_dat_Nush <- Model_dat_Nush %>% dplyr::select(-c(YEAR,ChlA_GOAtiming, ChlA_GOAmagnitude))
+Model_dat_Nush_BAS_noChlA <- Model_dat_Nush %>% dplyr::select(-c(YEAR,PDO_Jan, ENSO_Jan,ChlA_GOAtiming, ChlA_GOAmagnitude))
 Nushagak.ZS <- bas.lm(Nush ~ .,
-                      data = Model_dat_Nush[,-13],#remove abundance, same as above
+                      data = Model_dat_Nush_BAS_noChlA,
                       prior = "ZS-null",
                       modelprior = uniform(), initprobs = "eplogp",
                       force.heredity = FALSE, pivot = TRUE
@@ -352,13 +359,14 @@ ggsave(filename = paste0("figs/Nushagak Partial Effects/Nush_InclusionProbabilit
        height = 4,
        dpi = 300)
 
+R2_avg_nush <- sum(Nushagak.ZS$R2 * Nushagak.ZS$postprobs)
 
 #Togiak
 
 
-Model_dat_Tog <- Model_dat_Tog %>% dplyr::select(-c(YEAR,ChlA_GOAtiming, ChlA_GOAmagnitude))
+Model_dat_Tog_BAS_noChlA <- Model_dat_Tog %>% dplyr::select(-c(YEAR,PDO_Jan, ENSO_Jan,ChlA_GOAtiming, ChlA_GOAmagnitude))
 Togiak.ZS <- bas.lm(Tog ~ .,
-                    data = Model_dat_Tog,
+                    data = Model_dat_Tog_BAS_noChlA,
                     prior = "ZS-null",
                     modelprior = uniform(), initprobs = "eplogp",
                     force.heredity = FALSE, pivot = TRUE
@@ -389,3 +397,4 @@ ggsave(filename = paste0("figs/Togiak Partial Effects/Tog_InclusionProbability_N
        height = 4,
        dpi = 300)
 
+R2_avg_tog <- sum(Togiak.ZS$R2 * Togiak.ZS$postprobs)

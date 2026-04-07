@@ -2,6 +2,7 @@
 ###GAMS
 library(mgcv)
 
+source(here("R/Pull Data.R"))
 #Using the best equation from the LM
 
 model_2u <- gam(Uga ~ Uga_lag1 + June_temp_anomaly + PDO_May + ChlA_GOAtiming +Uga_tempdiff + extent,
@@ -31,7 +32,7 @@ visreg(model_2k)
 
 
 model_2n <- gam(Nush ~ June_temp_anomaly + June_cumeastwind_anomaly + PDO_Jan +ENSO_Jan + ChlA_GOAtiming + 
-                  ChlA_GOAmagnitude + June_pressure_anomaly +Nush_tempdiff + extent + Abundance, 
+                  ChlA_GOAmagnitude + June_pressure_anomaly + s(extent) + Abundance, 
                 data = Model_dat_Nush, na.action = na.omit)
 summary(model_2n)
 plot(residuals(model_2n))

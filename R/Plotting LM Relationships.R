@@ -17,7 +17,15 @@ source(here("R/LM Code NoChlA.R"))
 
 #######Ugashik
 #With ChlA
-predictors <- c("Uga_lag1", "June_temp_anomaly", "PDO_May","ChlA_GOAtiming", "Uga_tempdiff","extent")
+predictors <- c(
+  "PDO_May",
+  "ChlA_GOAmagnitude",
+  "June_pressure_anomaly",
+  "extent",
+  "GOA_SpringSST_anomaly",
+  "Ugashik_meanflow_June",
+  "Uga_JuneSST_anomaly"
+)
 
 
 for (pred in predictors) {
@@ -52,8 +60,13 @@ for (pred in predictors) {
 }
 
 #No ChlA
-predictors <- c("Uga_lag1", "June_temp_anomaly", "GOA_SpringSST_anomaly","Ugashik_meanflow_June")
-Uga_lag1 + June_temp_anomaly + GOA_SpringSST_anomaly + Ugashik_meanflow_June
+predictors <-  c(
+  "Uga_lag1",
+  "June_pressure_anomaly",
+  "GOA_SpringSST_anomaly",
+  "Ugashik_meanflow_June"
+)
+
 
 for (pred in predictors) {
   
@@ -89,7 +102,18 @@ for (pred in predictors) {
 
 ####Egegik
 #With ChlA
-predictors <- c("June_cumeastwind_anomaly", "PDO_Jan", "ENSO_Jan", "PDO_May","ChlA_GOAtiming", "ChlA_GOAmagnitude","extent", "Abundance", "Egegik_meanflow_June")
+predictors <- c(
+  "June_cumeastwind_anomaly",
+  "June_cumnorthwind_anomaly",
+  "PDO_May",
+  "ChlA_GOAmagnitude",
+  "June_pressure_anomaly",
+  "extent",
+  "Abundance",
+  "GOA_SpringSST_anomaly",
+  "Egegik_meanflow_June",
+  "Ege_JuneSST_anomaly"
+)
 
 for (pred in predictors) {
   
@@ -123,7 +147,15 @@ for (pred in predictors) {
 }
 
 #No ChlA
-predictors <- c("Ege_lag1", "June_temp_anomaly","PDO_Jan", "PDO_May", "GOA_SpringSST_anomaly","extent","Abundance")
+predictors <- c(
+  "Ege_lag1",
+  "June_cumnorthwind_anomaly",
+  "June_pressure_anomaly",
+  "extent",
+  "Abundance",
+  "GOA_SpringSST_anomaly",
+  "Egegik_meanflow_June"
+)
 
 for (pred in predictors) {
   
@@ -159,7 +191,18 @@ for (pred in predictors) {
 ####Kvichak
 
 #With ChlA
-predictors <- c("Kvichakproportion", "PDO_May","ChlA_GOAtiming", "ChlA_GOAmagnitude","extent")
+predictors <- c(
+  "Kvi_lag1",
+  "PDO_May",
+  "ENSO_May",
+  "ChlA_GOAmagnitude",
+  "ChlA_GOAtiming",
+  "extent",
+  "GOA_SpringSST_anomaly",
+  "KvichakDistrict_meanflow_June",
+  "Kvichakproportion",
+  "Kvi_JuneSST_anomaly"
+)
 
 for (pred in predictors) {
   
@@ -193,7 +236,13 @@ for (pred in predictors) {
 }
 
 #No ChlA
-predictors <- c("Nak.Kvi_lag1", "June_temp_anomaly","PDO_Jan", "PDO_May", "GOA_SpringSST_anomaly","extent","Kvichakproportion")
+predictors <-c(
+  "Kvi_lag1",
+  "June_pressure_anomaly",
+  "extent",
+  "GOA_SpringSST_anomaly",
+  "KvichakDistrict_meanflow_June"
+)
 
 for (pred in predictors) {
   
@@ -229,7 +278,22 @@ for (pred in predictors) {
 ####Nushagak
 
 #With ChlA
-predictors <- c("June_cumeastwind_anomaly", "June_pressure_anomaly","PDO_Jan","extent","Abundance", "June_temp_anomaly","ENSO_Jan", "Nush_tempdiff","ChlA_GOAtiming", "ChlA_GOAmagnitude")
+predictors <- c(
+  "Nush_lag1",
+  "June_temp_anomaly",
+  "June_cumeastwind_anomaly",
+  "June_cumnorthwind_anomaly",
+  "PDO_May",
+  "ENSO_May",
+  "ChlA_GOAmagnitude",
+  "ChlA_GOAtiming",
+  "June_pressure_anomaly",
+  "extent",
+  "GOA_SpringSST_anomaly",
+  "NushagakDistrict_meanflow_June",
+  "Igushikproportion",
+  "Nush_JuneSST_anomaly"
+)
 
 
 for (pred in predictors) {
@@ -264,7 +328,14 @@ for (pred in predictors) {
 }
 
 #No ChlA
-predictors <- c("June_cumeastwind_anomaly", "June_pressure_anomaly","PDO_Jan","extent","Abundance", "PDO_May","ENSO_May", "Nush_tempdiff","NushagakDistrict_meanflow_June")
+predictors <- c(
+  "June_cumeastwind_anomaly",
+  "ENSO_May",
+  "June_pressure_anomaly",
+  "extent",
+  "Abundance",
+  "Nush_JuneSST_anomaly"
+)
 
 for (pred in predictors) {
   
@@ -301,7 +372,20 @@ for (pred in predictors) {
 ####Togiak
 
 #With ChlA
-predictors <- c("June_temp_anomaly", "June_pressure_anomaly", "GOA_SpringSST_anomaly","extent","PDO_May","ChlA_GOAmagnitude", "Togiak_meanflow_June")
+predictors <- c(
+  "Tog_lag1",
+  "June_temp_anomaly",
+  "June_cumeastwind_anomaly",
+  "June_cumnorthwind_anomaly",
+  "PDO_May",
+  "ENSO_May",
+  "ChlA_GOAmagnitude",
+  "June_pressure_anomaly",
+  "extent",
+  "Abundance",
+  "GOA_SpringSST_anomaly",
+  "Togiak_meanflow_June"
+)
 
 
 for (pred in predictors) {
@@ -336,7 +420,13 @@ for (pred in predictors) {
 }
 
 #No ChlA
-predictors <- c("PDO_May", "June_pressure_anomaly", "GOA_SpringSST_anomaly","extent")
+predictors <- c(
+  "PDO_May",
+  "June_pressure_anomaly",
+  "extent",
+  "Togiak_meanflow_June",
+  "Tog_JuneSST_anomaly"
+)
 
 for (pred in predictors) {
   
