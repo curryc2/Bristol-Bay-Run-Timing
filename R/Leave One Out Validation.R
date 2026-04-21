@@ -1,7 +1,7 @@
 library(here)
 library(BAS)
 library(dplyr)
-
+library(Metrics)
 
 source(here("R/Pull Data.R"))
 
@@ -91,10 +91,14 @@ for(district in names(districts)){
   rmse_bas <- sqrt(mean((response - pred_bas)^2))
   rmse_lm  <- sqrt(mean((response - pred_lm)^2))
   
+  mape_bas <- mape(actual = response, predicted = pred_bas)
+  mape_lm <- mape(actual = response, predicted = pred_lm)
   
   # BAS
   r2_bas <- 1 - sum((response - pred_bas)^2, na.rm = TRUE) /
     sum((response - mean(response, na.rm = TRUE))^2)
+  
+  
   
   # LM
   r2_lm <- 1 - sum((response - pred_lm)^2, na.rm = TRUE) /
@@ -105,6 +109,7 @@ for(district in names(districts)){
     District = district,
     Model    = c("BAS","LM"),
     RMSE     = c(rmse_bas, rmse_lm),
+    MAPE     = c(mape_bas, mape_lm),
     R2       = c(r2_bas, r2_lm)
   )
   
@@ -210,6 +215,9 @@ for(district in names(districts)){
     rmse_lm  <- sqrt(mean((response - pred_lm)^2))
     
     
+    mape_bas <- mape(actual = response, predicted = pred_bas)
+    mape_lm <- mape(actual = response, predicted = pred_lm)
+    
     # BAS
     r2_bas <- 1 - sum((response - pred_bas)^2, na.rm = TRUE) /
       sum((response - mean(response, na.rm = TRUE))^2)
@@ -223,6 +231,7 @@ for(district in names(districts)){
       District = district,
       Model    = c("BAS","LM"),
       RMSE     = c(rmse_bas, rmse_lm),
+      MAPE     = c(mape_bas, mape_lm),
       R2       = c(r2_bas, r2_lm)
     )
     
@@ -249,5 +258,5 @@ for(district in names(districts)){
   predictions_summary_noChlA$ChlA <- "No"
   performance_all <- rbind(performance_summary, performance_summary_noChlA)
   predictions_all <- rbind(predictions_summary, predictions_summary_noChlA)
-  
+  summary(model_bestu)
   

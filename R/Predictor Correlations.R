@@ -17,18 +17,35 @@ Model_dat
 
 ##Ugashik
 dev.new()
-Model_dat_Uga %>% dplyr::select(Uga_lag1,June_temp_anomaly,PDO_May,ChlA_GOAtiming,Uga_tempdiff,extent) %>% na.omit() %>% 
+Model_dat_Uga %>% dplyr::select(Uga_lag1, June_temp_anomaly, June_cumeastwind_anomaly, June_cumnorthwind_anomaly, PDO_Jan, PDO_May, ENSO_Jan, ENSO_May,
+                                ChlA_GOAmagnitude, ChlA_GOAtiming, June_pressure_anomaly, Uga_tempdiff, extent, 
+                                Abundance, GOA_SpringSST_anomaly, Ugashik_meanflow_June, Uga_JuneSST_anomaly) %>% na.omit() %>% 
+  cor() %>% corrplot::corrplot.mixed()
+
+##Remove correlated parameters and replot
+Model_dat_Uga %>% dplyr::select(Uga_lag1, June_temp_anomaly, June_cumeastwind_anomaly, June_cumnorthwind_anomaly, PDO_May, ENSO_Jan, ENSO_May,
+                                ChlA_GOAmagnitude, ChlA_GOAtiming, June_pressure_anomaly, extent, 
+                                Abundance, GOA_SpringSST_anomaly, Ugashik_meanflow_June, Uga_JuneSST_anomaly) %>% na.omit() %>% 
   cor() %>% corrplot::corrplot.mixed()
 
 ##Egegik
 dev.new()
-Model_dat_Ege %>% dplyr::select(June_cumeastwind_anomaly,PDO_Jan,PDO_May,ENSO_Jan,ChlA_GOAtiming,
-                                  ChlA_GOAmagnitude,extent,Abundance,Egegik_meanflow_June) %>% na.omit() %>% 
+Model_dat_Ege %>% dplyr::select(Ege_lag1, June_temp_anomaly, June_cumeastwind_anomaly, June_cumnorthwind_anomaly, PDO_May, ENSO_May,
+                                ChlA_GOAmagnitude, ChlA_GOAtiming, June_pressure_anomaly, extent, 
+                                Abundance, GOA_SpringSST_anomaly, Egegik_meanflow_June, Ege_JuneSST_anomaly) %>% na.omit() %>% 
   cor() %>% corrplot::corrplot.mixed()
 
 ##Kvichak
 dev.new()
-Model_dat_Kvi %>% dplyr::select(PDO_May,ChlA_GOAtiming, ChlA_GOAmagnitude,extent, Kvichakproportion) %>% na.omit() %>% 
+Model_dat_Kvi %>% dplyr::select(Kvi_lag1, June_temp_anomaly, June_cumeastwind_anomaly, June_cumnorthwind_anomaly, PDO_Jan, PDO_May, ENSO_Jan, ENSO_May,
+                                ChlA_GOAmagnitude, ChlA_GOAtiming, June_pressure_anomaly, Kvi_tempdiff, extent, 
+                                  Abundance, GOA_SpringSST_anomaly, KvichakDistrict_meanflow_June, Kvichakproportion, Kvi_JuneSST_anomaly) %>% na.omit() %>% 
+  cor() %>% corrplot::corrplot.mixed()
+
+#####Remove correlated parameters and replot
+Model_dat_Kvi %>% dplyr::select(Kvi_lag1, June_temp_anomaly, June_cumeastwind_anomaly, June_cumnorthwind_anomaly, PDO_May, ENSO_May,
+                                ChlA_GOAmagnitude, ChlA_GOAtiming, June_pressure_anomaly, extent, 
+                                Abundance, GOA_SpringSST_anomaly, KvichakDistrict_meanflow_June, Kvichakproportion, Kvi_JuneSST_anomaly) %>% na.omit() %>% 
   cor() %>% corrplot::corrplot.mixed()
 
 ##Nushagak
