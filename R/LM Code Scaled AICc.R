@@ -17,12 +17,12 @@ source(here("R/Pull Data Scaled.R"))
 #I brute force created the full model set using the above covariates, then selected the model with the lowest AIC.  That is provided 
 #in the LM Code.R script.
 
-model_bestu <- lm(Uga ~ Uga ~ S_ChlA_GOAmagnitude + S_PDO_May + S_ENSO_May + S_extent,
+model_bestu <- lm(Uga ~ S_ChlA_GOAmagnitude + S_PDO_May + S_ENSO_May + S_extent,
                   data = S_Model_dat_Uga_ChlA, na.action = na.omit)
 summary(model_bestu)
 plot(residuals(model_bestu))
 
-#adj r2 .7922
+#adj r2 .73
 
 #visreg(model_bestu)
 
@@ -36,48 +36,43 @@ summary(model_beste)
 plot(residuals(model_beste))
 #visreg(model_beste)
 
-#adj r2 .864
+#adj r2 .61
 
 
 
 ####Kvichak
 
 
-model_bestk <- lm(Kvi ~Kvi ~ S_ChlA_GOAmagnitude + S_ChlA_GOAtiming + S_PDO_May + S_ENSO_May + S_extent, 
+model_bestk <- lm(Kvi ~ S_ChlA_GOAmagnitude + S_ChlA_GOAtiming + S_PDO_May + S_ENSO_May + S_extent, 
                   data = S_Model_dat_Kvi_ChlA, na.action = na.omit)
 summary(model_bestk)
 plot(residuals(model_bestk))
 #visreg(model_bestk)
 
-#adj r2 .8434
+#adj r2 .7296
 
 
 ####Nushagak
 
 
-model_bestn <- lm(Nush ~ S_Nush_lag1 + S_June_temp + S_June_cumeastwind +
-                    S_June_cumnorthwind + S_PDO_May + S_ENSO_May + S_ChlA_GOAmagnitude +
-                    S_ChlA_GOAtiming + S_June_pressure + S_extent + S_GOA_SpringSST +
-                    S_NushagakDistrict_meanflow_June + S_Igushikproportion + S_Nush_JuneSST, 
+model_bestn <- lm(Nush ~ S_June_temp + S_extent + S_Abundance, 
                   data = S_Model_dat_Nush_ChlA, na.action = na.omit)
 summary(model_bestn)
 plot(residuals(model_bestn))
 #visreg(model_bestn)
 
-#adj r2 .907
+#adj r2 .3877
 
 
 ####Togiak
 
-model_bestt <- lm(Tog ~ S_Tog_lag1 + S_June_temp + S_June_cumeastwind + S_June_cumnorthwind + 
-                    S_PDO_May + S_ENSO_May + S_ChlA_GOAmagnitude +S_June_pressure + 
-                    S_extent + S_Abundance + S_GOA_SpringSST +S_Togiak_meanflow_June, 
+model_bestt <- lm(Tog ~ S_June_cumeastwind + S_ChlA_GOAmagnitude + S_PDO_May + S_extent + S_Togiak_meanflow_June, 
                   data = S_Model_dat_Tog_ChlA, na.action = na.omit)
 summary(model_bestt)
 plot(residuals(model_bestt))
 #visreg(model_bestt)
 
-#adj r2 .8237
+#adj r2 .7465
 
 
 ##########################################################################################

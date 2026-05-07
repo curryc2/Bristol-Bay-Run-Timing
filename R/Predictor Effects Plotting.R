@@ -42,8 +42,8 @@ Plot_data$District <- factor(Plot_data$District,
 
 #Provide common names for predictors to ensure they plot on the same row, we can adapt these to anything 
 Plot_data <- Plot_data %>% mutate(term = recode(term,
-                       "S_June_cumeastwind" = "Cumulative East wind (June)",
-                       "S_June_cumnorthwind" = "Cumulative North wind (June)",
+                       "S_June_cumeastwind" = "Cumulative East Wind (June)",
+                       "S_June_cumnorthwind" = "Cumulative North Wind (June)",
                        "S_PDO_May" = "PDO (May)",
                        "S_ChlA_GOAmagnitude" = "Gulf of Alaska ChlA Spring Bloom Magnitude",
                        "S_ChlA_GOAtiming" = "Gulf of Alaska ChlA Spring Bloom Timing",
@@ -68,11 +68,6 @@ Plot_data <- Plot_data %>% mutate(term = recode(term,
                        "S_Tog_lag1" = "Previous Year Median Return Date",
                        "S_Uga_lag1" = "Previous Year Median Return Date",
                        "S_ENSO_May" = "ENSO (May)",
-                       "S_June_cumnorthwind" = "Cumulative North wind (June)",
-                       "S_June_cumnorthwind" = "Cumulative North wind (June)",
-                       "S_June_cumnorthwind" = "Cumulative North wind (June)",
-                       "S_June_cumnorthwind" = "Cumulative North wind (June)",
-                       "S_June_cumnorthwind" = "Cumulative North wind (June)",
                        "S_Kvichakproportion" = "Proportion of Late District Run",
                        "S_Igushikproportion" = "Proportion of Late District Run",
   ))  
@@ -118,9 +113,9 @@ Predictor_plot <- ggplot(Plot_data, aes(x = District, y = term)) +
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14),
-    axis.title = element_text(size = 16, face = "bold"),
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title = element_text(size = 20, face = "bold"),
     
     legend.text = element_text(size = 16),
     legend.title = element_text(size = 20)
@@ -135,8 +130,8 @@ Predictor_plot <- ggplot(Plot_data, aes(x = District, y = term)) +
 
 ggsave(filename = paste0("figs/Predictor Effects AICc.png"),
        plot = Predictor_plot,
-       width = 16,
-       height = 18,
+       width = 14,
+       height = 12,
        dpi = 300)
 
 
