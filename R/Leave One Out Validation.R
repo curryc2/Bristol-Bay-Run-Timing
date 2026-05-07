@@ -258,5 +258,5 @@ for(district in names(districts)){
   predictions_summary_noChlA$ChlA <- "No"
   performance_all <- rbind(performance_summary, performance_summary_noChlA)
   predictions_all <- rbind(predictions_summary, predictions_summary_noChlA)
-  summary(model_bestu)
+
   

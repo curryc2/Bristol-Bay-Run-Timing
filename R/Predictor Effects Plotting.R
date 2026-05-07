@@ -5,7 +5,8 @@ require(corrplot)
 library(visreg)
 
 
-source(here("R/LM Code Scaled.R"))
+#source(here("R/LM Code Scaled.R"))
+source(here("R/LM Code Scaled AICc.R"))
 
 #Lets extract all coefficients and use these to make the plot to visualize effect size of with standardized predictors
 
@@ -105,11 +106,11 @@ Predictor_plot <- ggplot(Plot_data, aes(x = District, y = term)) +
   scale_x_discrete(
     breaks = c("Ugashik","Egegik", "Kvichak", "Nushagak", "Togiak"),
     labels = c(
-      "Ugashik"  = expression(atop("Ugashik", (R^2 == 0.79))),
-      "Egegik"  = expression(atop("Egegik", (R^2 == 0.86))),
-      "Kvichak"  = expression(atop("Kvichak", (R^2 == 0.84))),
-      "Nushagak" = expression(atop("Nushagak", (R^2 == 0.91))),
-      "Togiak"  = expression(atop("Togiak", (R^2 == 0.82)))
+      "Ugashik"  = expression(atop("Ugashik", atop((R^2 == 0.73), (RMSE == 3.09)))),
+      "Egegik"  = expression(atop("Egegik", atop((R^2 == 0.61), (RMSE == 2.85)))),
+      "Kvichak"  = expression(atop("Kvichak", atop((R^2 == 0.73), (RMSE == 2.11)))),
+      "Nushagak" = expression(atop("Nushagak", atop((R^2 == 0.39), (RMSE == 1.95)))),
+      "Togiak"  = expression(atop("Togiak", atop((R^2 == 0.75), (RMSE == 2.08))))
     )
   )+
   theme_bw() +
@@ -132,7 +133,7 @@ Predictor_plot <- ggplot(Plot_data, aes(x = District, y = term)) +
 
 #Save the plot
 
-ggsave(filename = paste0("figs/Predictor Effects.png"),
+ggsave(filename = paste0("figs/Predictor Effects AICc.png"),
        plot = Predictor_plot,
        width = 16,
        height = 18,
