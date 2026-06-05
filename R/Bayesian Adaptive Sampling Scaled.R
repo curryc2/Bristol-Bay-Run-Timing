@@ -387,9 +387,10 @@ Inc_plot <-ggplot(Inclusion_data, aes(x = reorder(Variable, Inclusion_Prob),
     panel.grid.minor = element_blank(),
     panel.spacing = unit(1.5, "lines"),
     
-    axis.text.x = element_text(size = 12),
-    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 14),
+    axis.text.y = element_text(size = 14),
     axis.title = element_text(size = 16, face = "bold"),
+    strip.text = element_text(size = 16),
     
     legend.text = element_text(size = 16),
     legend.title = element_text(size = 20)

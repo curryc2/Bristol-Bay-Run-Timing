@@ -22,12 +22,17 @@ Median_Timing_long <- Median_Timing %>%
 #Plot data 
 Runtiming_plot <- ggplot(Median_Timing_long, aes(x = YEAR, y = Timing, color=District)) +
   geom_rect(
-    aes(xmin = 2002, xmax = 2024, ymin = 178, ymax = 210),
+    aes(xmin = 2002, xmax = 2012, ymin = 178, ymax = 210),
     fill = "grey",
     alpha = 0.1,
     inherit.aes = FALSE
   )+
-
+  geom_rect(
+    aes(xmin = 2016, xmax = 2024, ymin = 178, ymax = 210),
+    fill = "grey",
+    alpha = 0.1,
+    inherit.aes = FALSE
+  )+
   geom_line(size=1.5)+
   scale_size(range = c(2, 16)) +
   scale_x_continuous(breaks = seq(1965,
