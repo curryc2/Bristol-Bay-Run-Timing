@@ -23,7 +23,7 @@ Model_dat_Uga_BAS <- Model_dat_Uga_BAS %>% rename(
                                                 "Pink Salmon Abundance" = "S_Abundance",
                                                 "Mean Gulf of Alaska Sea Surface Temperature (April/May)" = "S_GOA_SpringSST",
                                                 "Total District River Meanflow (June)" = "S_Ugashik_meanflow_June",
-                                                "Mean District Sea Surfact Temperature (June)" = "S_Uga_JuneSST",
+                                                "Mean District Sea Surface Temperature (June)" = "S_Uga_JuneSST",
                                                 "Previous Year Median Return Date" = "S_Uga_lag1",
                                                 "ENSO (May)" = "S_ENSO_May")
 
@@ -395,7 +395,7 @@ Inc_plot <-ggplot(Inclusion_data, aes(x = reorder(Variable, Inclusion_Prob),
     legend.text = element_text(size = 16),
     legend.title = element_text(size = 20)
   ) +
-  labs(x = "Variable", y = "Inclusion Probability")
+  labs(x = "Predictor", y = "Inclusion Probability")
 
 ggsave(filename = paste0("figs/InclusionProbability.png"),
        plot = Inc_plot,
