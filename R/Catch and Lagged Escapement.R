@@ -6,30 +6,11 @@ library(purrr)
 
 here()
 
-###############For later, CPUE data read in code
+################CPUE from RDS files, historical and current
 
-# #CPUE from RDS files, historical and current.  Combine as necessary
-# CPUE_Dist <- readRDS(here("data/CPUE data/Historical CPUE Dist.rds"))
-# Dist_Current <- readRDS(here("data/CPUE data/Current CPUE Dist.rds"))
-# CPUE_Dist <- abind::abind(CPUE_Dist, Dist_Current, along = 3)
-# dimnames(CPUE_Dist)[[3]][dimnames(CPUE_Dist)[[3]] == ""] <- "2025"
-# 
-# 
-# DailyDataCPUE <- as.data.frame.table(CPUE_Dist, responseName = "CPUE")
-# names(DailyDataCPUE) <- c("jdate", "dist_name", "year", "CPUE")
-# DailyDataCPUE$year <- as.numeric(as.character(DailyDataCPUE$year))
-# DailyDataCPUE$day <- as.numeric(as.character(DailyDataCPUE$day))
-# DailyDataCPUE$dist_name <- recode(
-#   DailyDataCPUE$dist_name,
-#   "321" = "Ugashik",
-#   "322" = "Egegik",
-#   "324" = "Kvichak",
-#   "325" = "Nushagak",
-#   "326" = "Togiak"
-# )
-# head(DailyDataCPUE)
-
-
+CPUE <- read.csv(here("data/CPUE data/Historical CPUE Interp.csv"), header=TRUE, check.names=FALSE, row.names = 1)
+CPUE_Current <- read.csv(here("data/CPUE data/Current CPUE Interp.csv"), header=TRUE,check.names=FALSE, row.names = 1)
+CPUE_data <- as.data.frame(t(cbind(CPUE, CPUE_Current)))
 
 #################Bring in the catch and escapement data
 CatchEscapement <- read.csv(here("data/Catch and Escapement.csv"))
@@ -117,7 +98,7 @@ lagsum_CatchandEscapment <- function(DailyDataCatch,
   rownames(CE_data) <- days 
   CE_data <- CE_data %>% select (-jdate)
   CE_data <- as.data.frame(t(CE_data))
-  CE_data <- CE_data %>% select (-c("155","156","157","158","159","160"))
+  CE_data <- as.data.frame(CE_data %>% select (-c("155","156","157","158","159","160")))
   return(CE_data)
 }
 
