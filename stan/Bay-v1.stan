@@ -87,9 +87,9 @@ model {
   // PRIORS
   RPI ~ uniform(0,2e4);
   TT ~ normal(7,2);
-  
+  sigma_CE ~ uniform(0,1e3);
   // LIKELIHOODS   
     for (i in 1:Nyear)
     for (j in 1:NdayCE)
-      CE[i,j] ~ normal(pred_CE[i,j], sigma_CE);
+      log(CE[i,j]+1) ~ normal(log(pred_CE[i,j]+1), sigma_CE);
 }
