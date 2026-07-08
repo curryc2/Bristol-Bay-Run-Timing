@@ -24,7 +24,7 @@ init_fun <- function() {
   list(
     RPI = rep(1000, Nyear),
     TT = rep(7, Nyear),
-    sigma_CE = 100
+    sigma_CE = 5
   )
 }
 
@@ -38,78 +38,6 @@ stan.fit <- stan(file=file.path(here("stan", paste0("Bay-", version, ".stan"))),
                  verbose=FALSE,
                  seed=101,
                  control = list(adapt_delta = 0.99)) 
-
-
-
-
-library(bayesplot)
-
-#--------------------------------------------------
-# Basic summary
-#--------------------------------------------------
-print(stan.fit)
-
-# Summary statistics
-summary(stan.fit)
-
-# Summary table
-summary(stan.fit)$summary
-
-#--------------------------------------------------
-# Posterior samples
-#--------------------------------------------------
-post <- rstan::extract(stan.fit)
-
-# View parameter names
-names(post)
-
-# Example parameters
-head(post$RPI)
-head(post$TT)
-post$sigma_CE
-
-#--------------------------------------------------
-# Convergence diagnostics
-#--------------------------------------------------
-summary(stan.fit)$summary[, "Rhat"]
-summary(stan.fit)$summary[, "n_eff"]
-
-#--------------------------------------------------
-# Trace plots
-#--------------------------------------------------
-traceplot(stan.fit, pars = c("sigma_CE"))
-
-# First year's parameters
-traceplot(stan.fit, pars = c("TT[1]", "RPI[1]"))
-
-#--------------------------------------------------
-# Posterior densities
-#--------------------------------------------------
-stan_dens(stan.fit, pars = c("sigma_CE"))
-
-#--------------------------------------------------
-# Pair plot
-#--------------------------------------------------
-pairs(stan.fit, pars = c("sigma_CE", "TT[1]", "RPI[1]"))
-
-#--------------------------------------------------
-# Transformed parameters
-#--------------------------------------------------
-dim(post$pred_CE)
-dim(post$totalCPUE)
-
-# Example posterior distributions
-plot(post$TT[,1], type = "l", main = "TT[1]")
-hist(post$TT[,1], main = "Posterior TT[1]", xlab = "TT")
-
-plot(post$RPI[,1], type = "l", main = "RPI[1]")
-hist(post$RPI[,1], main = "Posterior RPI[1]", xlab = "RPI")
-
-plot(post$pred_CE[,1,20], type = "l",
-     main = "pred_CE: Year 1, Day 20")
-hist(post$pred_CE[,1,20],
-     main = "Posterior pred_CE: Year 1, Day 20",
-     xlab = "pred_CE")
 
 
 
