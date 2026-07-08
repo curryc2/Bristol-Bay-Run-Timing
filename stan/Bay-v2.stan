@@ -48,6 +48,9 @@ transformed parameters {
       }
     }
   }
+  //Vectorize
+  // propCPUE[1:Nyear,1:NdayPM,1:NdayCE] = 0.0;
+  // dailyCPUE = 0.0;
   // Calculations   
 
   // Distribute CPUE from each Port Moller day
@@ -57,7 +60,8 @@ transformed parameters {
 
       real arrival = j + TT[i];
 
-      for (k in 1:NdayCE) {
+      // for (k in 1:NdayCE) {
+      for (k in j:NdayCE) { // NOTE:  This will only work if start day for dayPM is the same as dayCE
 
         if (fabs(arrival - k) < 1) {
           propCPUE[i,j,k] = 1 - fabs(arrival - k);
@@ -72,21 +76,35 @@ transformed parameters {
   }
 
 // Sum CPUE for each CE day
- for (i in 1:Nyear) {
+ // for (i in 1:Nyear) {
+ //    for (j in 1:NdayCE) { 
+ //      for (k in 1:NdayPM) {
+ //        totalCPUE[i,j] += dailyCPUE[i,k,j];
+ //      } 
+ //    }
+ //  } 
+  // Vectorized Form
+  for (i in 1:Nyear) {
     for (j in 1:NdayCE) { 
-      for (k in 1:NdayPM) {
-        totalCPUE[i,j] += dailyCPUE[i,k,j];
-      } 
+      // for (k in 1:NdayPM) {
+        totalCPUE[i,j] = sum(dailyCPUE[i,,j]);
+      // } 
     }
   }  
 
-//calculate pred_CE
+
+  //calculate pred_CE
   for (i in 1:Nyear) {
     for (j in 1:NdayCE) {
       pred_CE[i,j] = RPI[i] * totalCPUE[i,j];
     }
   }
-
+  // Vectorized Version
+  // for (i in 1:Nyear) {
+  //   // for (j in 1:NdayCE) {
+  //     pred_CE[i,] = RPI .* totalCPUE[i,];
+  //   // }
+  // }
 
 }
 
