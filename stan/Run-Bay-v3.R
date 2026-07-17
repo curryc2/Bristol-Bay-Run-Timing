@@ -70,5 +70,6 @@ traceplot(stan.fit, pars="TT")
 traceplot(stan.fit, pars="sigma_CE")
 
 
-# Shiny Stan
+# Shiny Stan ======================================
+# shinystan::launch_shinystan(stan.fit)
 
