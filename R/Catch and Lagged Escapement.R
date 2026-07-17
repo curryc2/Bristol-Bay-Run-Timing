@@ -20,7 +20,7 @@ DailyDataEscapement <- CatchEscapement %>%filter(list.type=="escapement")%>%filt
   summarise(
     DistrictEscapement = sum(number, na.rm = TRUE),
     .groups = "drop"
-  ) %>% filter(jdate>=161 & jdate <=225) %>% arrange(year,jdate) #filter to appropriate date range
+  ) %>% filter(jdate>=161 & jdate <=210) %>% arrange(year,jdate) #filter to appropriate date range
 DailyDataEscapement[is.na(DailyDataEscapement)] <- 0
 
 
@@ -29,7 +29,7 @@ DailyDataCatch <- CatchEscapement %>%filter(list.type=="catch")%>%filter(year>19
   summarise(
     Catch = sum(number, na.rm = TRUE),
     .groups = "drop"
-  ) %>% filter(jdate>=161 & jdate <=225) %>% arrange(year,jdate) #filter to appropriate date range
+  ) %>% filter(jdate>=161 & jdate <=210) %>% arrange(year,jdate) #filter to appropriate date range
 DailyDataCatch[is.na(DailyDataCatch)] <- 0
 
 

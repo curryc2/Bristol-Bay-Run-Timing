@@ -15,9 +15,9 @@ data {
 
 parameters {
   array[Nyear] real RPI; // Run-per-index: May need to estimate in log space
-  array[Nyear] real TT; // Travel Time
+  array[Nyear] real<lower=3, upper=14> TT; // Travel Time
   // array[Nyear]
-  real<lower=0>sigma_CE; // Could be expanded to be year-specific
+  array[Nyear] real<lower=0> sigma_CE; // Could be expanded to be year-specific
 }
 
 // This is where the magic happens!!!!!
@@ -33,18 +33,14 @@ transformed parameters {
   
   
   //Initialize with zeros
+
   for (i in 1:Nyear) {
     for (j in 1:NdayCE) {
       totalCPUE[i,j] = 0.0;
       pred_CE[i,j] = 0.0;
-    }
-  }
-
-  for (i in 1:Nyear) {
-    for (j in 1:NdayPM) {
-      for (k in 1:NdayCE) {
-        propCPUE[i,j,k] = 0.0;
-        dailyCPUE[i,j,k] = 0.0;
+      for (k in 1:NdayPM) {
+        propCPUE[i,k,j] = 0.0;
+        dailyCPUE[i,k,j] = 0.0;
       }
     }
   }
@@ -57,11 +53,13 @@ transformed parameters {
   for (i in 1:Nyear) {
 
     for (j in 1:NdayPM) {
-
+      
       real arrival = j + TT[i];
-
+      int llimit = j + 3;
+      int ulimit = j + 14;
+      
       // for (k in 1:NdayCE) {
-      for (k in j:NdayCE) { // NOTE:  This will only work if start day for dayPM is the same as dayCE
+      for (k in llimit:min(NdayCE,ulimit)) { // NOTE:  This will only work if start day for dayPM is the same as dayCE
 
         if (fabs(arrival - k) < 1) {
           propCPUE[i,j,k] = 1 - fabs(arrival - k);
@@ -118,9 +116,9 @@ model {
   // LIKELIHOODS   
   for (i in 1:Nyear) {
     for (j in 1:NdayCE) {
-      if(CE[i,j]>0) {
+      if(CE[i,j]>0 && pred_CE[i,j]>0) {
         // log(CE[i,j]+1) ~ normal(log(pred_CE[i,j]+1), sigma_CE);
-        log(CE[i,j]+1e-3) ~ normal(log(pred_CE[i,j]+1e-3), sigma_CE);
+        log(CE[i,j]+1e-3) ~ normal(log(pred_CE[i,j]+1e-3), sigma_CE[i]);
       }
     }
   }
