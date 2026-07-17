@@ -58,11 +58,11 @@ transformed parameters {
     for (j in 1:NdayPM) {
       
       real arrival = j + TT[i];
-      int llimit = j + 3;
+      // int llimit = j + 3;
       int ulimit = j + 14;
       
-      // for (k in 1:NdayCE) {
-      for (k in llimit:min(NdayCE,ulimit)) { // NOTE:  This will only work if start day for dayPM is the same as dayCE
+      for (k in 1:NdayCE) {
+      // for (k in llimit:min(NdayCE,ulimit)) { // NOTE:  This will only work if start day for dayPM is the same as dayCE
 
         if (fabs(arrival - k) < 1) {
           propCPUE[i,j,k] = 1 - fabs(arrival - k);
@@ -120,10 +120,10 @@ model {
   // LIKELIHOODS   
   for (i in 1:Nyear) {
     for (j in 1:NdayCE) {
-      if(CE[i,j]>0 && pred_CE[i,j]>0) {
+      // if(CE[i,j]>0 && pred_CE[i,j]>0) {
         // log(CE[i,j]+1) ~ normal(log(pred_CE[i,j]+1), sigma_CE);
         log(CE[i,j]+1e-3) ~ normal(log(pred_CE[i,j]+1e-3), sigma_CE[i]);
-      }
+      // }
     }
   }
 
