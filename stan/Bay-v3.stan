@@ -15,7 +15,7 @@ data {
 
 parameters {
   array[Nyear] real ln_RPI; // Run-per-index: May need to estimate in log space
-  array[Nyear] real<lower=3, upper=14> TT; // Travel Time
+  array[Nyear] real TT; // Travel Time
   // array[Nyear]
   array[Nyear] real<lower=0> sigma_CE; // Could be expanded to be year-specific
 }
@@ -58,8 +58,6 @@ transformed parameters {
     for (j in 1:NdayPM) {
       
       real arrival = j + TT[i];
-      // int llimit = j + 3;
-      int ulimit = j + 14;
       
       for (k in 1:NdayCE) {
       // for (k in llimit:min(NdayCE,ulimit)) { // NOTE:  This will only work if start day for dayPM is the same as dayCE
@@ -113,17 +111,17 @@ transformed parameters {
 model {
   // PRIORS
   // RPI ~ uniform(0,2e4);
-  ln_RPI ~ normal(0,3);
-  TT ~ normal(7,2);
+  ln_RPI ~ normal(0,5);
+  TT ~ normal(7,3);
   // sigma_CE ~ uniform(0,1e3);
-  sigma_CE ~ normal(0,1); // Reminder: As parameter definition has LB 0, this is half-normal
+  sigma_CE ~ normal(1,1); // Reminder: As parameter definition has LB 0, this is half-normal
   // LIKELIHOODS   
   for (i in 1:Nyear) {
     for (j in 1:NdayCE) {
-      // if(CE[i,j]>0 && pred_CE[i,j]>0) {
+      if(CE[i,j]>0 && pred_CE[i,j]>0) {
         // log(CE[i,j]+1) ~ normal(log(pred_CE[i,j]+1), sigma_CE);
         log(CE[i,j]+1e-3) ~ normal(log(pred_CE[i,j]+1e-3), sigma_CE[i]);
-      // }
+      }
     }
   }
 

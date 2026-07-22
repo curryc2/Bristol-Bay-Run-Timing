@@ -6,6 +6,22 @@ options(mc.cores = parallel::detectCores())
 
 source(here("R/Catch and Lagged Escapement.R"))
 
+#install.packages("zoo")
+library(zoo)
+
+####3 day rolling average
+CE_rolling <- t(apply(CE_data, 1, function(x)
+  zoo::rollapply(x, 3, mean, na.rm = TRUE, fill = NA, align = "center")
+))
+colnames(CE_rolling) <- colnames(CE_data)
+CE_rolling <- as.data.frame(CE_rolling[,-c(1,50)])
+
+CPUE_rolling <- t(apply(CPUE_data, 1, function(x)
+  zoo::rollapply(x, 3, mean, na.rm = TRUE, fill = NA, align = "center")
+))
+colnames(CPUE_rolling) <- colnames(CPUE_data)
+CPUE_rolling <- as.data.frame(CPUE_rolling[,-c(1,38)])
+
 # Control Section =======================
 # Specify which years to fit
 years <- as.integer(rownames(CE_data))
@@ -19,8 +35,8 @@ n.fit.years <- length(fit.years)
 loc.fit.years <- which(years %in% fit.years)
 
 # Truncate data objects
-CE_data <- CE_data[loc.fit.years,]
-CPUE_data <- CPUE_data[loc.fit.years,]
+CE_data <- CE_rolling[loc.fit.years,]
+CPUE_data <- CPUE_rolling[loc.fit.years,]
 
 # Define dimensions ==================
 Nyear <- as.integer(nrow(CE_data))
@@ -28,8 +44,8 @@ NdayPM <- as.integer(ncol(CPUE_data))
 NdayCE <- as.integer(ncol(CE_data))
 
 # MCMC Parameters
-n.chains <- 3
-n.iter <- 5e3 #1e4
+n.chains <- 1
+n.iter <- 1e2 #1e4
 n.thin <- 2 #4
 # Determine number of Stan Samples
 (n.iter/n.thin)*0.5*n.chains
@@ -61,15 +77,6 @@ stan.fit <- stan(file=file.path(here("stan", paste0("Bay-", version, ".stan"))),
                  # control = list(adapt_delta = 0.99)) 
 
 
-pars <- rstan::extract(stan.fit)
+saveRDS(stan.fit, file = "stan_fit_V3.rds")
 
-# Plotting Section =================================
-traceplot(stan.fit, pars="ln_RPI")
-traceplot(stan.fit, pars="RPI")
-traceplot(stan.fit, pars="TT")
-traceplot(stan.fit, pars="sigma_CE")
-
-
-# Shiny Stan ======================================
-# shinystan::launch_shinystan(stan.fit)
 
