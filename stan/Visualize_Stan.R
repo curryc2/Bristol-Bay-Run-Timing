@@ -64,6 +64,28 @@ CE_long <- CE_data %>%
     values_to = "CE"
   )
 
+CPUE_long <- CPUE_data %>%
+  tibble::rownames_to_column("year") %>%
+  pivot_longer(
+    -year,
+    names_to = "jdate",
+    values_to = "CPUE"
+  )%>%
+  mutate(
+    year = as.integer(year),
+    jdate = as.integer(jdate)
+  ) %>%
+  complete(
+    year,
+    jdate = 161:225,
+    fill = list(CPUE = 0)
+  ) %>%
+  arrange(year, jdate)%>% 
+  mutate(
+    year = as.character(year),
+    jdate = as.character(jdate))
+
+
 Pred_long <- as.data.frame(pred_CE_median) %>%
   tibble::rownames_to_column("year") %>%
   pivot_longer(
@@ -72,8 +94,9 @@ Pred_long <- as.data.frame(pred_CE_median) %>%
     values_to = "Pred_CE"
   )
 
-plot_data <- left_join(CE_long, Pred_long,
-                       by = c("year", "jdate"))
+plot_data <- CE_long %>%
+  left_join(Pred_long, by = c("year", "jdate")) %>%
+  left_join(CPUE_long, by = c("year", "jdate"))
 
 fit <- ggplot(plot_data, aes(x = as.numeric(jdate))) +
   geom_col(aes(y = CE),
@@ -82,6 +105,7 @@ fit <- ggplot(plot_data, aes(x = as.numeric(jdate))) +
   geom_line(aes(y = Pred_CE),
               colour = "red",
               linewidth = 1) +
+  geom_line(aes(y=CPUE*6), colour = "blue")+
   facet_wrap(~year, scales = "free_y") +
   theme_bw() +
   theme(
