@@ -1,17 +1,14 @@
+pars <- rstan::extract(stan.fit)
+
 
 #--------------------------------------------------
 # Basic summary
 #--------------------------------------------------
 print(stan.fit)
 
-# Summary statistics
-summary(stan.fit)
-
 # Summary table
 summary(stan.fit)$summary
 
-
-pars <- rstan::extract(stan.fit)
 
 #--------------------------------------------------
 # Convergence diagnostics
@@ -19,32 +16,37 @@ pars <- rstan::extract(stan.fit)
 summary(stan.fit)$summary[, "Rhat"]
 summary(stan.fit)$summary[, "n_eff"]
 
-#--------------------------------------------------
-# Trace plots
-#--------------------------------------------------
-traceplot(stan.fit, pars="ln_RPI")
-traceplot(stan.fit, pars="RPI")
-traceplot(stan.fit, pars="TT")
-traceplot(stan.fit, pars="sigma_CE")
-
-
-#--------------------------------------------------
-# Pair plot
-#--------------------------------------------------
-pairs(stan.fit, pars = c("sigma_CE", "TT[1]", "RPI[1]"))
 
 
 
 
 #install.packages("shinystan")
-library(shinystan)
+#install.packages("shinystan")
+#library(shinystan)
 
-shinystan::launch_shinystan(fit)
+#launch_shinystan(stan.fit)
 
 
 
+#--------------------------------------------------
+# Traceplots
+#--------------------------------------------------
 
-############Plot results 
+png(here("figs/V4/RPI_trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "RPI")
+dev.off()
+
+png(here("figs/V4/Sigma_trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "sigma_CE")
+dev.off()
+
+png(here("figs/V4/trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "TT")
+dev.off()
+
+#--------------------------------------------------
+# CE vs Pred CE by year
+#--------------------------------------------------
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -102,30 +104,35 @@ fit <- ggplot(plot_data, aes(x = as.numeric(jdate))) +
   geom_col(aes(y = CE),
            fill = "grey70",
            width = 1) +
-  geom_line(aes(y = Pred_CE),
-              colour = "red",
-              linewidth = 1) +
-  geom_line(aes(y=CPUE*6), colour = "blue")+
+  geom_line(aes(y = Pred_CE, colour = "Pred CE"),
+            linewidth = 1) +
+  geom_line(aes(y = CPUE * 6, colour = "Scaled CPUE"),
+            linewidth = 1) +
+  scale_color_manual(
+    name = "",
+    values = c(
+      "Pred CE" = "red",
+      "Scaled CPUE" = "blue"
+    )
+  ) +
   facet_wrap(~year, scales = "free_y") +
   theme_bw() +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
-    
     axis.text.x = element_text(size = 16),
     axis.text.y = element_text(size = 16),
     axis.title = element_text(size = 20, face = "bold"),
-    
-    legend.text = element_text(size = 16),
+    legend.text = element_text(size = 20),
     legend.title = element_text(size = 20)
-  )+
+  ) +
   labs(
     x = "Julian day",
     y = "Catch/Escapement"
   )
 
-ggsave(filename = paste0("figs/fit_V3.png"),
+ggsave(filename = paste0(here("figs/V4/fit_V4.png")),
        plot = fit,
-       width = 24,
+       width = 30,
        height = 24,
        dpi = 300)

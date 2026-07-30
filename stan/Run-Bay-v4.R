@@ -64,15 +64,6 @@ stan.fit <- stan(file=file.path(here("stan", paste0("Bay-", version, ".stan"))),
                  # control = list(adapt_delta = 0.99)) 
 
 
-pars <- rstan::extract(stan.fit)
+saveRDS(stan.fit, here("output", paste0("stan_fit_", version, ".rds")))
 
-# Plotting Section =================================
-traceplot(stan.fit, pars="ln_RPI")
-traceplot(stan.fit, pars="RPI")
-traceplot(stan.fit, pars="TT")
-traceplot(stan.fit, pars="sigma_CE")
-
-
-# Shiny Stan ======================================
-# shinystan::launch_shinystan(stan.fit)
 
