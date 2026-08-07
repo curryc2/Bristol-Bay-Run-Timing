@@ -1,5 +1,21 @@
+require(here)
+require(tidyverse)
+require(dplyr)
+require(rstan)
+
+# Control Section ==================================
+version <- "v5"
+
+dir.figs <- here("figs",version)
+dir.create(dir.figs, recursive=TRUE)
+
+# Load Fitted Model =============
+stan.fit <- readRDS(here("output", paste0("stan_fit_", version, ".rds")))
+
 pars <- rstan::extract(stan.fit)
 
+
+# Create output director
 
 #--------------------------------------------------
 # Basic summary
@@ -32,15 +48,15 @@ summary(stan.fit)$summary[, "n_eff"]
 # Traceplots
 #--------------------------------------------------
 
-png(here("figs/V4/RPI_trace.png"), width = 4000, height = 2600, res = 300)
+png(here(dir.figs,"RPI_trace.png"), width = 4000, height = 2600, res = 300)
 traceplot(stan.fit, pars = "RPI")
 dev.off()
 
-png(here("figs/V4/Sigma_trace.png"), width = 4000, height = 2600, res = 300)
+png(here(dir.figs,"Sigma_trace.png"), width = 4000, height = 2600, res = 300)
 traceplot(stan.fit, pars = "sigma_CE")
 dev.off()
 
-png(here("figs/V4/TT_trace.png"), width = 4000, height = 2600, res = 300)
+png(here(dir.figs,"TT_trace.png"), width = 4000, height = 2600, res = 300)
 traceplot(stan.fit, pars = "TT")
 dev.off()
 
@@ -131,7 +147,7 @@ fit <- ggplot(plot_data, aes(x = as.numeric(jdate))) +
     y = "Catch/Escapement"
   )
 
-ggsave(filename = paste0(here("figs/V4/fit_V4.png")),
+ggsave(filename = paste0(here(dir.figs,"fit_",version,".png")),
        plot = fit,
        width = 30,
        height = 24,
