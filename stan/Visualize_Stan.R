@@ -40,7 +40,7 @@ png(here("figs/V4/Sigma_trace.png"), width = 4000, height = 2600, res = 300)
 traceplot(stan.fit, pars = "sigma_CE")
 dev.off()
 
-png(here("figs/V4/trace.png"), width = 4000, height = 2600, res = 300)
+png(here("figs/V4/TT_trace.png"), width = 4000, height = 2600, res = 300)
 traceplot(stan.fit, pars = "TT")
 dev.off()
 

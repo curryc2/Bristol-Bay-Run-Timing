@@ -77,7 +77,7 @@ transformed parameters {
         rowsum = sum(propCPUE[i,j,]);
       for (k in 1:NdayCE){
         if (propCPUE[i,j,k]>0){
-          propCPUE[i,j,k] = propCPUE[i,j,k]/rowsum;  //this was to remove the array for storing standardized values.  I believe this works as its written
+          propCPUE[i,j,k] = propCPUE[i,j,k]/rowsum;
           dailyCPUE[i,j,k] = propCPUE[i,j,k] * CPUE[i,j];
           }
         }
@@ -115,4 +115,3 @@ model {
   }
 
 }
-
