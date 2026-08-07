@@ -1,6 +1,6 @@
 # Script to Run Stan Move Bay-v1
 library(here)
-install.packages("rstan")
+# install.packages("rstan")
 library(rstan)
 
 options(mc.cores = parallel::detectCores())
