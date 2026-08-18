@@ -147,7 +147,7 @@ fit <- ggplot(plot_data, aes(x = as.numeric(jdate))) +
     y = "Catch/Escapement"
   )
 
-ggsave(filename = paste0(here(dir.figs,"fit_",version,".png")),
+ggsave(filename = here(dir.figs,paste0("fit_",version,".png")),
        plot = fit,
        width = 30,
        height = 24,
