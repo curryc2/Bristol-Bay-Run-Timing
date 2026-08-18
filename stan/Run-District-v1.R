@@ -5,50 +5,59 @@ library(rstan)
 
 options(mc.cores = parallel::detectCores())
 
-source(here("R/Catch and Lagged Escapement.R"))
+source(here("R/Catch and Lagged Escapement District.R"))
 
 # Control Section =======================
 # Specify which years to fit
-years <- as.integer(rownames(CE_data))
+years <- as.integer(dimnames(CE_data)[[2]])
 years
 
 # Define subset of years to fit
-fit.years <- 1990:2025 # full range is 1990-2025
+fit.years <- 2005:2025 # full range is 2005-2025
 n.fit.years <- length(fit.years)
 
 # Determine location of years to fi
 loc.fit.years <- which(years %in% fit.years)
 
 # Truncate data objects
-CE_data <- CE_data[loc.fit.years,]
-CPUE_data <- CPUE_data[loc.fit.years,]
+CE_data <- CE_data[,loc.fit.years,]
+CPUE_data <- CPUE_data[,loc.fit.years,]/1000
 
 # Define dimensions ==================
-Nyear <- as.integer(nrow(CE_data))
-NdayPM <- as.integer(ncol(CPUE_data))
-NdayCE <- as.integer(ncol(CE_data))
+Nyear <- as.integer(length(dimnames(CE_data)[[2]]))
+NdayPM <- as.integer(length(dimnames(CPUE_data)[[3]]))
+NdayCE <- as.integer(length(dimnames(CE_data)[[3]]))
+Ndistrict <- as.integer(length(dimnames(CE_data)[[1]]))
 Lags <- seq(0,20,1)
 Nlags <- length(Lags)
 
 # MCMC Parameters
 n.chains <- 3
-n.iter <- 1e3 #1e4
+n.iter <- 2e3 #1e4
 n.thin <- 2 #4
 # Determine number of Stan Samples
 (n.iter/n.thin)*0.5*n.chains
-version <- "v4"
+version <- "v1"
 
 # Create Stan data
 stan.data <- list("CPUE"=CPUE_data, "CE"=CE_data, "Nyear"=Nyear,
-                  "NdayPM"=NdayPM, "NdayCE"=NdayCE, "Nlags"=Nlags, "Lags"=Lags
+                  "NdayPM"=NdayPM, "NdayCE"=NdayCE, "Nlags"=Nlags, "Lags"=Lags, "Ndistrict"=Ndistrict
 )
 
 # With random variation
-init_fun <- function(chain_id=1) {
+init_fun <- function(chain_id = 1) {
   list(
-    ln_RPI = log(runif(n=Nyear, 1, 5)),
-    TT = runif(n=Nyear, 5, 8),
-    sigma_CE = runif(n=Nyear,0.2,0.8)
+    ln_RPI = matrix(log(runif(Ndistrict * Nyear, 7, 9)),
+                    nrow = Ndistrict,
+                    ncol = Nyear),
+    
+    TT = matrix(runif(Ndistrict * Nyear, 5, 8),
+                nrow = Ndistrict,
+                ncol = Nyear),
+    
+    sigma_CE = matrix(runif(Ndistrict * Nyear, 50, 100),
+                      nrow = Ndistrict,
+                      ncol = Nyear)
   )
 }
 

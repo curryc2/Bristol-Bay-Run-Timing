@@ -90,7 +90,7 @@ transformed parameters {
   for (i in 1:Nyear) {
     for (j in 1:NdayCE) { 
         totalCPUE[i,j] = sum(dailyCPUE[i,,j]);
-         pred_CE[i,j] = RPI[i] * totalCPUE[i,j];
+         pred_CE[i,j] = (RPI[i] * totalCPUE[i,j]);
     }
   }  
 
@@ -100,7 +100,7 @@ transformed parameters {
 model {
   // PRIORS
   // RPI ~ uniform(0,2e4);
-  ln_RPI ~ normal(0,5);
+  ln_RPI ~ normal(8.5,1);
   TT ~ normal(7,2);
   // sigma_CE ~ uniform(0,1e3);
   // sigma_CE ~ normal(0,1); // Reminder: As parameter definition has LB 0, this is half-normal

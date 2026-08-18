@@ -108,9 +108,9 @@ model {
   // PRIORS
 for (d in 1:Ndistrict) {
   for (i in 1:Nyear) {
-    ln_RPI[d,i] ~ normal(0, 5);
+    ln_RPI[d,i] ~ normal(8.5, 1);
     TT[d,i] ~ normal(7, 2);        
-    sigma_CE[d,i] ~ normal(0, 1);  
+    sigma_CE[d,i] ~  normal(0,100);  
   }
 }
   // LIKELIHOODS 
@@ -119,7 +119,7 @@ for (d in 1:Ndistrict){
     for (j in 1:NdayCE) {
       if(CE[d,i,j]>0) {
         // log(CE[i,j]+1) ~ normal(log(pred_CE[i,j]+1), sigma_CE);
-        log(CE[d,i,j]+1e-3) ~ normal(log(pred_CE[d,i,j]+1e-3), sigma_CE[d,i]);
+        CE[d,i,j] ~ normal(pred_CE[d,i,j], sigma_CE[d,i]);
       }
     }
   }

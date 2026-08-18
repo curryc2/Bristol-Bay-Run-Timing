@@ -21,7 +21,7 @@ loc.fit.years <- which(years %in% fit.years)
 
 # Truncate data objects
 CE_data <- CE_data[loc.fit.years,]
-CPUE_data <- CPUE_data[loc.fit.years,]
+CPUE_data <- CPUE_data[loc.fit.years,]/1000
 
 # Define dimensions ==================
 Nyear <- as.integer(nrow(CE_data))
@@ -32,11 +32,11 @@ Nlags <- length(Lags)
 
 # MCMC Parameters
 n.chains <- 3
-n.iter <- 5e2 #1e4
+n.iter <- 5e3 #1e4
 n.thin <- 2 #4
 # Determine number of Stan Samples
 (n.iter/n.thin)*0.5*n.chains
-version <- "v5"
+version <- "V5"
 
 # Create Stan data
 stan.data <- list("CPUE"=CPUE_data, "CE"=CE_data, "Nyear"=Nyear,
@@ -46,7 +46,7 @@ stan.data <- list("CPUE"=CPUE_data, "CE"=CE_data, "Nyear"=Nyear,
 # With random variation
 init_fun <- function(chain_id=1) {
   list(
-    ln_RPI = log(runif(n=Nyear, 1, 5)),
+    ln_RPI = runif(n=Nyear, 7, 9),
     TT = runif(n=Nyear, 5, 8),
     # sigma_CE = runif(n=Nyear,0.2,0.8)
 #     Normal likelihood
@@ -60,10 +60,9 @@ stan.fit <- stan(file=file.path(here("stan", paste0("Bay-", version, ".stan"))),
                  model_name=paste0("Bay-", version),
                  data=stan.data, init = init_fun,
                  chains=n.chains, iter=n.iter, thin=n.thin,
-                 cores=n.chains,
+                 cores=1,
                  verbose=FALSE,
-                 seed=101)#,
-                 # control = list(adapt_delta = 0.99)) 
+                 seed=101)# control = list(adapt_delta = 0.99)) 
 
 
 saveRDS(stan.fit, here("output", paste0("stan_fit_", version, ".rds")))
