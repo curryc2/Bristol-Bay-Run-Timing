@@ -33,7 +33,7 @@ Nlags <- length(Lags)
 
 # MCMC Parameters
 n.chains <- 3
-n.iter <- 2e3 #1e4
+n.iter <- 5e3 #1e4
 n.thin <- 2 #4
 # Determine number of Stan Samples
 (n.iter/n.thin)*0.5*n.chains
@@ -73,6 +73,6 @@ stan.fit <- stan(file=file.path(here("stan", paste0("District-", version, ".stan
                  # control = list(adapt_delta = 0.99)) 
 
 
-saveRDS(stan.fit, here("output", paste0("stan_fit_", version, ".rds")))
+saveRDS(stan.fit, here("output", paste0("stan_fit_district_", version, ".rds")))
 
 

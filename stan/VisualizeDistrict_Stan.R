@@ -242,6 +242,8 @@ Pred_long <- lapply(seq_along(districts), function(i) {
   ) %>%
   select(district, year, jdate, Pred_CE)
 
+Pred_long$jdate <- as.integer(Pred_long$jdate)
+Pred_long$year <- as.integer(Pred_long$year)
 
 #Combine into one data frame for ggplot
 plot_data <- CE_long %>%
@@ -320,4 +322,6 @@ for(i in seq_along(districts)) {
     dpi = 300
   )
 }
+
+
 

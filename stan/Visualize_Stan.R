@@ -152,3 +152,126 @@ ggsave(filename = here(dir.figs,paste0("fit_",version,".png")),
        width = 30,
        height = 24,
        dpi = 300)
+
+
+
+#--------------------------------------------------
+# Caterpillar plots for coastwide parameters
+#--------------------------------------------------
+
+RPI_summary <- data.frame(
+  year = fit.years,
+  median = apply(pars$RPI, 2, median),
+  lower = apply(pars$RPI, 2, quantile, probs = 0.025),
+  upper = apply(pars$RPI, 2, quantile, probs = 0.975)
+)
+
+RPI_plot <- ggplot(RPI_summary, aes(x = year, y = median)) +
+  geom_errorbar(
+    aes(ymin = lower, ymax = upper),
+    width = 0.15,
+    linewidth = 0.8
+  ) +
+  geom_point(size = 3, colour="blue") +
+  scale_x_continuous(
+    breaks = fit.years[seq(1, length(fit.years), by = 5)]
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 16, colour = "black"),
+    axis.text.y = element_text(size = 16, colour = "black"),
+    axis.title = element_text(size = 20, colour = "black")
+  ) +
+  labs(
+    x = "Year",
+    y = "RPI"
+  )
+
+ggsave(
+  filename = here(dir.figs, "RPI_caterpillar.png"),
+  plot = RPI_plot,
+  width = 12,
+  height =8,
+  dpi = 300
+)
+
+
+TT_summary <- data.frame(
+  year = fit.years,
+  median = apply(pars$TT, 2, median),
+  lower = apply(pars$TT, 2, quantile, probs = 0.025),
+  upper = apply(pars$TT, 2, quantile, probs = 0.975)
+)
+
+TT_plot <- ggplot(TT_summary, aes(x = year, y = median)) +
+  geom_errorbar(
+    aes(ymin = lower, ymax = upper),
+    width = 0.15,
+    linewidth = 0.8
+  ) +
+  geom_point(size = 3, colour="blue") +
+  scale_x_continuous(
+    breaks = fit.years[seq(1, length(fit.years), by = 5)]
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 16, colour = "black"),
+    axis.text.y = element_text(size = 16, colour = "black"),
+    axis.title = element_text(size = 20, colour = "black")
+  ) +
+  labs(
+    x = "Year",
+    y = "TT"
+  )
+
+ggsave(
+  filename = here(dir.figs, "TT_caterpillar.png"),
+  plot = TT_plot,
+  width = 12,
+  height =8,
+  dpi = 300
+)
+
+
+
+Sigma_summary <- data.frame(
+  year = fit.years,
+  median = apply(pars$sigma_CE, 2, median),
+  lower = apply(pars$sigma_CE, 2, quantile, probs = 0.025),
+  upper = apply(pars$sigma_CE, 2, quantile, probs = 0.975)
+)
+
+Sigma_plot <- ggplot(Sigma_summary, aes(x = year, y = median)) +
+  geom_errorbar(
+    aes(ymin = lower, ymax = upper),
+    width = 0.15,
+    linewidth = 0.8
+  ) +
+  geom_point(size = 3, colour="blue") +
+  scale_x_continuous(
+    breaks = fit.years[seq(1, length(fit.years), by = 5)]
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 16, colour = "black"),
+    axis.text.y = element_text(size = 16, colour = "black"),
+    axis.title = element_text(size = 20, colour = "black")
+  ) +
+  labs(
+    x = "Year",
+    y = "RPI"
+  )
+
+ggsave(
+  filename = here(dir.figs, "Sigma_caterpillar.png"),
+  plot = Sigma_plot,
+  width = 12,
+  height =8,
+  dpi = 300
+)
