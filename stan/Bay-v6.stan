@@ -33,8 +33,8 @@ parameters {
   real RPI_int; // Intercept for RPI
   array[NcovarRPI] real RPI_slp; // Covariate effects on RPI
   
-  real TT_int; // Intercept for RPI
-  array[NcovarTT] real TT_slp; // Covariate effects on RPI
+  real TT_int; // Intercept for TT
+  array[NcovarTT] real TT_slp; // Covariate effects on TT
   
   
   array[Nyear] real<lower=0> sigma_CE; // Could be expanded to be year-specific

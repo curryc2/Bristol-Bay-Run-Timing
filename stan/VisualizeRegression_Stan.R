@@ -1,0 +1,316 @@
+require(here)
+require(tidyverse)
+require(dplyr)
+require(rstan)
+
+# Control Section ==================================
+version <- "v6"
+
+dir.figs <- here("figs",version)
+dir.create(dir.figs, recursive=TRUE)
+
+# Load Fitted Model =============
+stan.fit <- readRDS(here("output", paste0("stan_fit_", version, ".rds")))
+
+pars <- rstan::extract(stan.fit)
+
+
+# Create output director
+
+#--------------------------------------------------
+# Basic summary
+#--------------------------------------------------
+print(stan.fit)
+
+# Summary table
+summary(stan.fit)$summary
+
+
+#--------------------------------------------------
+# Convergence diagnostics
+#--------------------------------------------------
+summary(stan.fit)$summary[, "Rhat"]
+summary(stan.fit)$summary[, "n_eff"]
+
+
+
+
+
+#install.packages("shinystan")
+#install.packages("shinystan")
+#library(shinystan)
+
+#launch_shinystan(stan.fit)
+
+
+
+#--------------------------------------------------
+# Traceplots
+#--------------------------------------------------
+
+png(here(dir.figs,"RPI-int_trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "RPI_int")
+dev.off()
+
+png(here(dir.figs,"RPI-slp_trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "RPI_slp")
+dev.off()
+
+png(here(dir.figs,"TT-int_trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "TT_int")
+dev.off()
+
+png(here(dir.figs,"TT-slp_trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "TT_slp")
+dev.off()
+
+png(here(dir.figs,"Sigma_trace.png"), width = 4000, height = 2600, res = 300)
+traceplot(stan.fit, pars = "sigma_CE")
+dev.off()
+
+
+#--------------------------------------------------
+# CE vs Pred CE by year
+#--------------------------------------------------
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+pred_CE_median <- apply(pars$pred_CE, c(2, 3), median)
+
+rownames(pred_CE_median) <- rownames(CE_data)
+colnames(pred_CE_median) <- colnames(CE_data)
+
+
+# Add year column from row names
+CE_long <- CE_data %>%
+  tibble::rownames_to_column("year") %>%
+  pivot_longer(
+    -year,
+    names_to = "jdate",
+    values_to = "CE"
+  )
+
+CPUE_long <- CPUE_data %>%
+  tibble::rownames_to_column("year") %>%
+  pivot_longer(
+    -year,
+    names_to = "jdate",
+    values_to = "CPUE"
+  )%>%
+  mutate(
+    year = as.integer(year),
+    jdate = as.integer(jdate)
+  ) %>%
+  complete(
+    year,
+    jdate = 161:225,
+    fill = list(CPUE = 0)
+  ) %>%
+  arrange(year, jdate)%>% 
+  mutate(
+    year = as.character(year),
+    jdate = as.character(jdate))
+
+
+Pred_long <- as.data.frame(pred_CE_median) %>%
+  tibble::rownames_to_column("year") %>%
+  pivot_longer(
+    -year,
+    names_to = "jdate",
+    values_to = "Pred_CE"
+  )
+
+plot_data <- CE_long %>%
+  left_join(Pred_long, by = c("year", "jdate")) %>%
+  left_join(CPUE_long, by = c("year", "jdate"))
+
+fit <- ggplot(plot_data, aes(x = as.numeric(jdate))) +
+  geom_col(aes(y = CE),
+           fill = "grey70",
+           width = 1) +
+  geom_line(aes(y = Pred_CE, colour = "Pred CE"),
+            linewidth = 1) +
+  #geom_line(aes(y = CPUE * 6000, colour = "Scaled CPUE"),
+      #      linewidth = 1) +
+  scale_color_manual(
+    name = "",
+    values = c(
+      "Pred CE" = "red",
+      "Scaled CPUE" = "blue"
+    )
+  ) +
+  facet_wrap(~year, scales = "free_y") +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title = element_text(size = 20, face = "bold"),
+    legend.text = element_text(size = 20),
+    legend.title = element_text(size = 20)
+  ) +
+  labs(
+    x = "Julian day",
+    y = "Catch/Escapement"
+  )
+
+ggsave(filename = here(dir.figs,paste0("fit_noCPUE_",version,".png")),
+       plot = fit,
+       width = 30,
+       height = 24,
+       dpi = 300)
+
+
+
+#--------------------------------------------------
+# Caterpillar plots for coastwide parameters
+#--------------------------------------------------
+
+RPI_int <- as.matrix(pars$RPI_int)
+RPI_slp <- as.matrix(pars$RPI_slp)
+Regression_dat <- as.matrix(Regression_dat)
+
+
+RPI_pred <- matrix(
+  RPI_int,
+  nrow = nrow(RPI_slp),
+  ncol = ncol(Regression_dat)
+) +
+  RPI_slp %*% Regression_dat
+
+
+RPI_summary <- data.frame(
+  year = as.numeric(colnames(Regression_dat)),
+  median = apply(RPI_pred, 2, median),
+  lower = apply(RPI_pred, 2, quantile, probs = 0.025),
+  upper = apply(RPI_pred, 2, quantile, probs = 0.975)
+)
+
+RPI_plot <- ggplot(RPI_summary, aes(x = year, y = median)) +
+  geom_errorbar(
+    aes(ymin = lower, ymax = upper),
+    width = 0.15,
+    linewidth = 0.8
+  ) +
+  geom_point(size = 3, colour="blue") +
+  scale_x_continuous(
+    breaks = fit.years[seq(1, length(fit.years), by = 5)]
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 16, colour = "black"),
+    axis.text.y = element_text(size = 16, colour = "black"),
+    axis.title = element_text(size = 20, colour = "black")
+  ) +
+  labs(
+    x = "Year",
+    y = "RPI"
+  )
+
+ggsave(
+  filename = here(dir.figs, "RPI_caterpillar.png"),
+  plot = RPI_plot,
+  width = 12,
+  height =8,
+  dpi = 300
+)
+
+
+
+##  TT
+
+TT_int <- as.matrix(pars$TT_int)
+TT_slp <- as.matrix(pars$TT_slp)
+Regression_dat <- as.matrix(Regression_dat)
+
+
+TT_pred <- matrix(
+  TT_int,
+  nrow = nrow(TT_slp),
+  ncol = ncol(Regression_dat)
+) +
+  TT_slp %*% Regression_dat
+
+
+TT_summary <- data.frame(
+  year = as.numeric(colnames(Regression_dat)),
+  median = apply(TT_pred, 2, median),
+  lower = apply(TT_pred, 2, quantile, probs = 0.025),
+  upper = apply(TT_pred, 2, quantile, probs = 0.975)
+)
+
+TT_plot <- ggplot(TT_summary, aes(x = year, y = median)) +
+  geom_errorbar(
+    aes(ymin = lower, ymax = upper),
+    width = 0.15,
+    linewidth = 0.8
+  ) +
+  geom_point(size = 3, colour = "blue") +
+  scale_x_continuous(
+    breaks = fit.years[seq(1, length(fit.years), by = 5)]
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 16, colour = "black"),
+    axis.text.y = element_text(size = 16, colour = "black"),
+    axis.title = element_text(size = 20, colour = "black")
+  ) +
+  labs(
+    x = "Year",
+    y = "TT"
+  )
+
+ggsave(
+  filename = here(dir.figs, "TT_caterpillar.png"),
+  plot = TT_plot,
+  width = 12,
+  height = 8,
+  dpi = 300
+)
+
+
+## Sigma
+
+Sigma_summary <- data.frame(
+  year = fit.years,
+  median = apply(pars$sigma_CE, 2, median),
+  lower = apply(pars$sigma_CE, 2, quantile, probs = 0.025),
+  upper = apply(pars$sigma_CE, 2, quantile, probs = 0.975)
+)
+
+Sigma_plot <- ggplot(Sigma_summary, aes(x = year, y = median)) +
+  geom_errorbar(
+    aes(ymin = lower, ymax = upper),
+    width = 0.15,
+    linewidth = 0.8
+  ) +
+  geom_point(size = 3, colour="blue") +
+  scale_x_continuous(
+    breaks = fit.years[seq(1, length(fit.years), by = 5)]
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 16, colour = "black"),
+    axis.text.y = element_text(size = 16, colour = "black"),
+    axis.title = element_text(size = 20, colour = "black")
+  ) +
+  labs(
+    x = "Year",
+    y = "RPI"
+  )
+
+ggsave(
+  filename = here(dir.figs, "Sigma_caterpillar.png"),
+  plot = Sigma_plot,
+  width = 12,
+  height =8,
+  dpi = 300
+)

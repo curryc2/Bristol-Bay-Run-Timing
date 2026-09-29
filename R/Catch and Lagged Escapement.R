@@ -1,8 +1,8 @@
 library(here)
 library(tidyr)
-library(dplyr)
 library(ggplot2)
 library(purrr)
+library(dplyr)
 
 here()
 
@@ -37,10 +37,10 @@ DailyDataCatch[is.na(DailyDataCatch)] <- 0
 lagsum_CatchandEscapment <- function(DailyDataCatch,
                                      DailyDataEscapement,
                                      lags){
-  
-  library(dplyr)
+
   library(tidyr)
   library(purrr)
+  library(dplyr)
   
   # lag vector should be in this order:
   # (Ugashik, Egegik, Kvichak, Nushagak, Togiak)
@@ -75,7 +75,7 @@ lagsum_CatchandEscapment <- function(DailyDataCatch,
       mutate(
         CE_data = CE_data + replace_na(esc, 0)
       ) %>%
-      select(-esc)
+      dplyr::select(-esc)
   }
   
 
@@ -96,9 +96,9 @@ lagsum_CatchandEscapment <- function(DailyDataCatch,
   CE_data <- CE_data %>%
     as.data.frame()
   rownames(CE_data) <- days 
-  CE_data <- CE_data %>% select (-jdate)
+  CE_data <- CE_data %>%  dplyr::select (-jdate)
   CE_data <- as.data.frame(t(CE_data))
-  CE_data <- as.data.frame(CE_data %>% select (-c("155","156","157","158","159","160")))
+  CE_data <- as.data.frame(CE_data %>% dplyr::select (-c("155","156","157","158","159","160")))
   return(CE_data)
 }
 
