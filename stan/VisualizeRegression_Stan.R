@@ -4,7 +4,7 @@ require(dplyr)
 require(rstan)
 
 # Control Section ==================================
-version <- "v6"
+version <- "v7"
 
 dir.figs <- here("figs",version)
 dir.create(dir.figs, recursive=TRUE)
@@ -304,7 +304,7 @@ Sigma_plot <- ggplot(Sigma_summary, aes(x = year, y = median)) +
   ) +
   labs(
     x = "Year",
-    y = "RPI"
+    y = "Sigma"
   )
 
 ggsave(
