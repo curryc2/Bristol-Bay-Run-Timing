@@ -40,7 +40,7 @@ DailyDataEscapement <- CatchEscapement %>%filter(list.type=="escapement")%>%filt
   summarise(
     DistrictEscapement = sum(number, na.rm = TRUE),
     .groups = "drop"
-  ) %>% filter(jdate>=161 & jdate <=210) %>% arrange(year,jdate) #filter to appropriate date range
+  ) %>% filter(jdate>=161 & jdate <=216) %>% arrange(year,jdate) #filter to appropriate date range
 DailyDataEscapement[is.na(DailyDataEscapement)] <- 0
 
 
@@ -93,7 +93,7 @@ lagsum_CatchandEscapment_district <- function(DailyDataCatch,
     esc <- DailyDataEscapement %>%
       filter(dist_name == districts[i]) %>%
       mutate(jdate = jdate - lags[i]) %>%
-      select(dist_name, year, jdate, DistrictEscapement) %>%
+      dplyr::select(dist_name, year, jdate, DistrictEscapement) %>%
       right_join(grid, by = c("dist_name", "year", "jdate")) %>%
       mutate(
         DistrictEscapement = tidyr::replace_na(DistrictEscapement, 0)
@@ -102,7 +102,7 @@ lagsum_CatchandEscapment_district <- function(DailyDataCatch,
     # Catch
     catch <- DailyDataCatch %>%
       filter(dist_name == districts[i]) %>%
-      select(dist_name, year, jdate, Catch) %>%
+      dplyr::select(dist_name, year, jdate, Catch) %>%
       right_join(grid, by = c("dist_name", "year", "jdate")) %>%
       mutate(
         Catch = tidyr::replace_na(Catch, 0)
